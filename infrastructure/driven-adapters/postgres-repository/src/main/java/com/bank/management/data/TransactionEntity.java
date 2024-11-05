@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "transaction")
@@ -23,6 +24,9 @@ public class TransactionEntity {
 
     @Column(name = "type_transaction", nullable = false)
     private String typeTransaction; // Ejemplo: "DEPOSIT", "WITHDRAWAL"
+
+    @OneToMany(mappedBy = "transaction")
+    private List<TransactionAccountDetailEntity>  accounts;
 
     @Column(name = "time_stamp", nullable = false)
     @CreationTimestamp

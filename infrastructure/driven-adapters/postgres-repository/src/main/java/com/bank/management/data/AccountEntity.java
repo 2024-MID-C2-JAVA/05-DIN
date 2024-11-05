@@ -1,5 +1,7 @@
 package com.bank.management.data;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -21,7 +23,11 @@ public class AccountEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
+    @JsonBackReference
     private CustomerEntity customer;
+
+    @OneToMany(mappedBy = "account")
+    private List<TransactionAccountDetailEntity>  transactions;
 
     @Column(name = "created_at")
     @CreationTimestamp
@@ -42,6 +48,15 @@ public class AccountEntity {
     }
 
     // Getters y Setters
+
+
+    public List<TransactionAccountDetailEntity> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<TransactionAccountDetailEntity> transactions) {
+        this.transactions = transactions;
+    }
 
     public Long getId() {
         return id;

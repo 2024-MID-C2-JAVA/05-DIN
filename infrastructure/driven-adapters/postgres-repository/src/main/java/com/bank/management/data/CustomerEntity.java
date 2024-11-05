@@ -36,6 +36,7 @@ public class CustomerEntity {
 
     // Getters y Setters
 
+
     public Long getId() {
         return id;
     }
