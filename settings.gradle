@@ -1,0 +1,17 @@
+rootProject.name = 'architecture-hex'
+
+include ':model'
+include ':use-cases'
+include ':app-service'
+include ':postgres-repository'
+include ':mongodb-repository'
+include ':aes-encryption'
+include ':web'
+
+findProject(':model').projectDir = file('./domain/model')
+findProject(':use-cases').projectDir = file('./domain/usecases')
+findProject(':app-service').projectDir = file('./applications/app-service')
+findProject(':postgres-repository').projectDir = file('./infrastructure/driven-adapters/postgres-repository')
+findProject(':mongodb-repository').projectDir = file('./infrastructure/driven-adapters/mongodb-repository')
+findProject(':aes-encryption').projectDir = file('./infrastructure/driven-adapters/aes-encryption')
+findProject(':web').projectDir = file('./infrastructure/entry-points/web')
