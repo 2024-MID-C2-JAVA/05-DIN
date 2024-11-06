@@ -1,20 +1,24 @@
 package com.bank.management;
 
 import com.bank.management.data.*;
+import com.bank.management.din.DinError;
+import com.bank.management.din.DinErrorCode;
+import com.bank.management.din.RequestMs;
+import com.bank.management.din.ResponseMs;
 import com.bank.management.usecase.EncryptionUseCase;
 import com.bank.management.usecase.ProcessDepositUseCase;
 import com.bank.management.usecase.ProcessPurchaseWithCardUseCase;
 import com.bank.management.usecase.ProcessWithdrawUseCase;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/bank-accounts/transaction")
+@RequestMapping("/api/v1/transactions")
 public class TransactionsController {
 
     private final EncryptionUseCase encryptionUseCase;
@@ -29,99 +33,79 @@ public class TransactionsController {
         this.processWithdrawUseCase = processWithdrawUseCase;
     }
 
-
     @PostMapping("/deposit")
-    public ResponseEntity<ResponseDepositDTO> processDeposit(@RequestBody RequestDepositDTO requestDepositDTO) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> processDeposit(@RequestBody RequestMs<RequestDepositDTO> request) {
+
+        request.validateDinHeaderFields();
 
         Deposit depositDomain = new Deposit.Builder()
-                .customerId(requestDepositDTO.getCustomerId())
-                .accountNumber(requestDepositDTO.getAccountNumber())
-                .amount(requestDepositDTO.getAmount())
-                .type(requestDepositDTO.getType())
+                .customerId(request.getDinBody().getCustomerId())
+                .accountNumber(request.getDinBody().getAccountNumber())
+                .amount(request.getDinBody().getAmount())
+                .type(request.getDinBody().getType())
                 .build();
 
         Optional<Account> accountOptional = processDepositUseCase.apply(depositDomain);
 
-        if (accountOptional.isPresent()) {
-            Account account = accountOptional.get();
+        Map<String, String> responseData = new HashMap<>();
+        responseData.put("accountNumber", encryptionUseCase.encryptData(request.getDinBody().getAccountNumber()));
 
-            ResponseDepositDTO responseDepositDTO = new ResponseDepositDTO.Builder()
-                    .setAccountNumber(account.getNumber())
-                    .setAmount(account.getAmount())
-                    .setMessage("Deposit successful")
-                    .build();
-            responseDepositDTO.setAccountNumber(encryptionUseCase.encryptData(requestDepositDTO.getAccountNumber()));
+        DinError dinError = accountOptional.isPresent()
+                ? new DinError("T", "api-bank-management-instance-1", DinErrorCode.DEPOSIT_SUCCESS.getCode(), DinErrorCode.DEPOSIT_SUCCESS.getErrorCodeProveedor(), DinErrorCode.DEPOSIT_SUCCESS.getMessage(), "Deposit was successful.")
+                : new DinError("E", "api-bank-management-instance-1", DinErrorCode.DEPOSIT_FAILED.getCode(), DinErrorCode.DEPOSIT_FAILED.getErrorCodeProveedor(), DinErrorCode.DEPOSIT_FAILED.getMessage(), "Deposit failed.");
 
-            return ResponseEntity.ok(responseDepositDTO);
-        } else {
-            return ResponseEntity.badRequest()
-                    .body(new ResponseDepositDTO.Builder()
-                            .setAccountNumber(encryptionUseCase.encryptData(requestDepositDTO.getAccountNumber()))
-                            .setAmount(requestDepositDTO.getAmount())
-                            .setMessage("Deposit failed")
-                            .build());
-        }
+        ResponseMs<Map<String, String>> responseMs = new ResponseMs<>(request.getDinHeader(), responseData, dinError);
+
+        return accountOptional.isPresent() ? ResponseEntity.ok(responseMs) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMs);
     }
 
     @PostMapping("/purchase-card")
-    public ResponseEntity<ResponsePurchaseDTO> processPurchase(@RequestBody RequestPurchaseDTO purchaseDTO) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> processPurchase(@RequestBody RequestMs<RequestPurchaseDTO> request) {
+
+        request.validateDinHeaderFields();
+
         Purchase purchase = new Purchase.Builder()
-                .accountNumber(purchaseDTO.getAccountNumber())
-                .amount(purchaseDTO.getAmount())
-                .type(purchaseDTO.getType())
+                .accountNumber(request.getDinBody().getAccountNumber())
+                .amount(request.getDinBody().getAmount())
+                .type(request.getDinBody().getType())
                 .build();
 
         Optional<Account> accountOptional = processPurchaseWithCardUseCase.apply(purchase);
 
-        if (accountOptional.isPresent()) {
-            Account account = accountOptional.get();
+        Map<String, String> responseData = new HashMap<>();
+        responseData.put("accountNumber", encryptionUseCase.encryptData(request.getDinBody().getAccountNumber()));
 
-            ResponsePurchaseDTO responsePurchaseDTO = new ResponsePurchaseDTO.Builder()
-                    .setAccountNumber(encryptionUseCase.encryptData(account.getNumber()))
-                    .setAmount(account.getAmount())
-                    .setMessage("Purchase successful")
-                    .build();
+        DinError dinError = accountOptional.isPresent()
+                ? new DinError("T", "api-bank-management-instance-1", DinErrorCode.PURCHASE_SUCCESS.getCode(), DinErrorCode.PURCHASE_SUCCESS.getErrorCodeProveedor(), DinErrorCode.PURCHASE_SUCCESS.getMessage(), "Purchase was successful.")
+                : new DinError("E", "api-bank-management-instance-1", DinErrorCode.PURCHASE_FAILED.getCode(), DinErrorCode.PURCHASE_FAILED.getErrorCodeProveedor(), DinErrorCode.PURCHASE_FAILED.getMessage(), "Purchase failed.");
 
-            responsePurchaseDTO.setAccountNumber(encryptionUseCase.encryptData(responsePurchaseDTO.getAccountNumber()));
-            return ResponseEntity.ok(responsePurchaseDTO);
-        } else {
-            return ResponseEntity.badRequest()
-                    .body(new ResponsePurchaseDTO.Builder()
-                            .setAccountNumber(purchase.getAccountNumber())
-                            .setAmount(purchase.getAmount())
-                            .setMessage("Purchase failed")
-                            .build());
-        }
+        ResponseMs<Map<String, String>> responseMs = new ResponseMs<>(request.getDinHeader(), responseData, dinError);
+
+        return accountOptional.isPresent() ? ResponseEntity.ok(responseMs) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMs);
     }
 
-    @PostMapping("/purchase")
-    public ResponseEntity<ResponseWithdrawalDTO> processWithdraw(@RequestBody RequestWithdrawalDTO requestWithdrawalDTO) {
+    @PostMapping("/withdraw")
+    public ResponseEntity<ResponseMs<Map<String, String>>> processWithdraw(@RequestBody RequestMs<RequestWithdrawalDTO> request) {
+
+        request.validateDinHeaderFields();
+
         Withdrawal withdrawal = new Withdrawal.Builder()
-                .setCustomerId(requestWithdrawalDTO.getCustomerId())
-                .setAccountNumber(requestWithdrawalDTO.getAccountNumber())
-                .setAmount(requestWithdrawalDTO.getAmount())
+                .setCustomerId(request.getDinBody().getCustomerId())
+                .setAccountNumber(request.getDinBody().getAccountNumber())
+                .setAmount(request.getDinBody().getAmount())
                 .build();
 
         Optional<Account> accountOptional = processWithdrawUseCase.apply(withdrawal);
 
-        if (accountOptional.isPresent()) {
-            Account account = accountOptional.get();
+        Map<String, String> responseData = new HashMap<>();
+        responseData.put("accountNumber", encryptionUseCase.encryptData(request.getDinBody().getAccountNumber()));
 
-            ResponseWithdrawalDTO responseWithdrawalDTO = new ResponseWithdrawalDTO.Builder()
-                    .setAccountNumber(encryptionUseCase.encryptData(account.getNumber()))
-                    .setAmount(account.getAmount())
-                    .setMessage("Withdrawal successful")
-                    .build();
+        DinError dinError = accountOptional.isPresent()
+                ? new DinError("T", "api-bank-management-instance-1", DinErrorCode.WITHDRAWAL_SUCCESS.getCode(), DinErrorCode.WITHDRAWAL_SUCCESS.getErrorCodeProveedor(), DinErrorCode.WITHDRAWAL_SUCCESS.getMessage(), "Withdrawal was successful.")
+                : new DinError("E", "api-bank-management-instance-1", DinErrorCode.WITHDRAWAL_FAILED.getCode(), DinErrorCode.WITHDRAWAL_FAILED.getErrorCodeProveedor(), DinErrorCode.WITHDRAWAL_FAILED.getMessage(), "Withdrawal failed.");
 
-            responseWithdrawalDTO.setAccountNumber(encryptionUseCase.encryptData(responseWithdrawalDTO.getAccountNumber()));
-            return ResponseEntity.ok(responseWithdrawalDTO);
-        } else {
-            return ResponseEntity.badRequest()
-                    .body(new ResponseWithdrawalDTO.Builder()
-                            .setAccountNumber(withdrawal.getAccountNumber())
-                            .setAmount(withdrawal.getAmount())
-                            .setMessage("Withdrawal failed")
-                            .build());
-        }
+        ResponseMs<Map<String, String>> responseMs = new ResponseMs<>(request.getDinHeader(), responseData, dinError);
+
+        return accountOptional.isPresent() ? ResponseEntity.ok(responseMs) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMs);
     }
 }

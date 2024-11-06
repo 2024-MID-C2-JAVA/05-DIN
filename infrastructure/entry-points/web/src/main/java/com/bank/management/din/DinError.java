@@ -23,15 +23,6 @@ public class DinError {
         this.details = details;
     }
 
-    public DinError() {
-        this.type = "N";
-        setCurrentDate();
-        this.origin = "User service";
-        this.code = "0000";
-        this.providerErrorCode = null;
-        this.message = "OK";
-        this.details = "OK";
-    }
 
     public String getType() {
         return type;

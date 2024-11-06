@@ -14,6 +14,23 @@ public class RequestMs<T> {
         this.dinBody = dinBody;
     }
 
+    public void validateDinHeaderFields() {
+        if (dinHeader == null) {
+            throw new IllegalArgumentException("DinHeader must be present.");
+        }
+
+        if (dinHeader.getDevice() == null || dinHeader.getDevice().isEmpty() ||
+                dinHeader.getLanguage() == null || dinHeader.getLanguage().isEmpty() ||
+                dinHeader.getUuid() == null || dinHeader.getUuid().isEmpty() ||
+                dinHeader.getIp() == null || dinHeader.getIp().isEmpty() ||
+                dinHeader.getTransactionTime() == null || dinHeader.getTransactionTime().isEmpty() ||
+                dinHeader.getSymmetricKey() == null || dinHeader.getSymmetricKey().isEmpty() ||
+                dinHeader.getInitializationVector() == null || dinHeader.getInitializationVector().isEmpty()) {
+
+            throw new IllegalArgumentException("All fields in DinHeader must be complete.");
+        }
+    }
+
     public DinHeader getDinHeader() {
         return dinHeader;
     }
