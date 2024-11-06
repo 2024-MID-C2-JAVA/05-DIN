@@ -10,11 +10,11 @@ public class EncryptionUseCase {
         this.encryptionGateway = encryptionGateway;
     }
 
-    public String encryptData(String plainText) {
-        return encryptionGateway.encrypt(plainText);
+    public String encryptData(String plainText, String base64Key, String base64Iv) {
+        return encryptionGateway.encrypt(plainText, base64Key, base64Iv);
     }
 
-    public String decryptData(String cipherText) {
-        return encryptionGateway.decrypt(cipherText);
+    public String decryptData(String cipherText, String base64Key, String base64Iv) {
+        return encryptionGateway.decrypt(cipherText, base64Key, base64Iv);
     }
 }

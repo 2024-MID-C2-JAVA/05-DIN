@@ -23,6 +23,24 @@ public class RequestDepositDTO {
     }
 
     // Getters
+
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getCustomerId() {
         return customerId;
     }

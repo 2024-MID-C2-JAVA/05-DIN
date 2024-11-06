@@ -52,7 +52,7 @@ public class AccountController {
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),
                     responseData,
-                    DinErrorCode.ACCOUNT_CREATED,
+                    DinErrorCode.SUCCESS,
                     HttpStatus.CREATED,
                     "Account creation process completed."
             );
@@ -103,7 +103,7 @@ public class AccountController {
         return ResponseBuilder.buildResponse(
                 request.getDinHeader(),
                 accountDTOs,
-                DinErrorCode.ACCOUNT_CREATED,
+                DinErrorCode.SUCCESS,
                 HttpStatus.CREATED,
                 "Account creation process completed."
         );
@@ -142,7 +142,7 @@ public class AccountController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<com.bank.management.ResponseMs<Map<String, String>>> deleteBankAccount(@RequestBody RequestMs<RequestGetBankAccountDTO> request) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> deleteBankAccount(@RequestBody RequestMs<RequestGetBankAccountDTO> request) {
 
         request.validateDinHeaderFields();
 
@@ -155,7 +155,7 @@ public class AccountController {
                 return ResponseBuilder.buildResponse(
                         request.getDinHeader(),
                         responseData,
-                        DinErrorCode.ACCOUNT_DELETED,
+                        DinErrorCode.SUCCESS,
                         HttpStatus.OK,
                         "Bank account deleted successfully."
                 );

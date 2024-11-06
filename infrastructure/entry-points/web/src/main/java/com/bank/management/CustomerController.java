@@ -50,7 +50,7 @@ public class CustomerController {
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),
                     responseData,
-                    DinErrorCode.CUSTOMER_CREATED,
+                    DinErrorCode.SUCCESS,
                     HttpStatus.CREATED,
                     "Customer creation process completed."
             );
@@ -126,21 +126,22 @@ public class CustomerController {
 
 
     @GetMapping
-    public ResponseEntity<ResponseMs<List<CustomerDTO>>> getAllCustomers(@RequestBody RequestMs<DinHeader> request) {
+    public ResponseEntity<ResponseMs<List<AllCustomerDTO>>> getAllCustomers(@RequestBody RequestMs<DinHeader> request) {
         request.validateDinHeaderFields();
 
         try {
             List<Customer> customers = getAllCustomersUseCase.apply();
 
-            List<CustomerDTO> customerDTOs = customers.stream()
-                    .map(customer -> new CustomerDTO.Builder()
+            List<AllCustomerDTO> AllcustomerDTOs = customers.stream()
+                    .map(customer -> new AllCustomerDTO.Builder()
                             .setUsername(customer.getUsername())
+                            .setId(customer.getId())
                             .build())
-                    .collect(Collectors.toList());
+                    .toList();
 
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),
-                    customerDTOs,
+                    AllcustomerDTOs,
                     DinErrorCode.SUCCESS,
                     HttpStatus.OK,
                     "All customers retrieved successfully."
