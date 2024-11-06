@@ -1,10 +1,7 @@
 package com.bank.management;
 
 import com.bank.management.data.*;
-import com.bank.management.din.DinError;
-import com.bank.management.din.DinErrorCode;
-import com.bank.management.din.RequestMs;
-import com.bank.management.din.ResponseMs;
+import com.bank.management.exception.*;
 import com.bank.management.usecase.EncryptionUseCase;
 import com.bank.management.usecase.ProcessDepositUseCase;
 import com.bank.management.usecase.ProcessPurchaseWithCardUseCase;
@@ -45,19 +42,67 @@ public class TransactionsController {
                 .type(request.getDinBody().getType())
                 .build();
 
-        Optional<Account> accountOptional = processDepositUseCase.apply(depositDomain);
+        try {
+            Optional<Account> accountOptional = processDepositUseCase.apply(depositDomain);
 
-        Map<String, String> responseData = new HashMap<>();
-        responseData.put("accountNumber", encryptionUseCase.encryptData(request.getDinBody().getAccountNumber()));
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("accountNumber", encryptionUseCase.encryptData(request.getDinBody().getAccountNumber()));
 
-        DinError dinError = accountOptional.isPresent()
-                ? new DinError("T", "api-bank-management-instance-1", DinErrorCode.DEPOSIT_SUCCESS.getCode(), DinErrorCode.DEPOSIT_SUCCESS.getErrorCodeProveedor(), DinErrorCode.DEPOSIT_SUCCESS.getMessage(), "Deposit was successful.")
-                : new DinError("E", "api-bank-management-instance-1", DinErrorCode.DEPOSIT_FAILED.getCode(), DinErrorCode.DEPOSIT_FAILED.getErrorCodeProveedor(), DinErrorCode.DEPOSIT_FAILED.getMessage(), "Deposit failed.");
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    responseData,
+                    DinErrorCode.DEPOSIT_SUCCESS,
+                    HttpStatus.OK,
+                    "Deposit was successful."
+            );
 
-        ResponseMs<Map<String, String>> responseMs = new ResponseMs<>(request.getDinHeader(), responseData, dinError);
+        } catch (InvalidAmountException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.DEPOSIT_FAILED,
+                    HttpStatus.BAD_REQUEST,
+                    e.getMessage()
+            );
 
-        return accountOptional.isPresent() ? ResponseEntity.ok(responseMs) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMs);
+        } catch (BankAccountNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.ACCOUNT_NOT_FOUND,
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            );
+
+        } catch (CustomerNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.CUSTOMER_NOT_FOUND,
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            );
+
+        } catch (InvalidDepositTypeException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.DEPOSIT_FAILED,
+                    HttpStatus.BAD_REQUEST,
+                    e.getMessage()
+            );
+
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.DEPOSIT_FAILED,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
+        }
     }
+
 
     @PostMapping("/purchase-card")
     public ResponseEntity<ResponseMs<Map<String, String>>> processPurchase(@RequestBody RequestMs<RequestPurchaseDTO> request) {
@@ -70,19 +115,67 @@ public class TransactionsController {
                 .type(request.getDinBody().getType())
                 .build();
 
-        Optional<Account> accountOptional = processPurchaseWithCardUseCase.apply(purchase);
+        try {
+            Optional<Account> accountOptional = processPurchaseWithCardUseCase.apply(purchase);
 
-        Map<String, String> responseData = new HashMap<>();
-        responseData.put("accountNumber", encryptionUseCase.encryptData(request.getDinBody().getAccountNumber()));
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("accountNumber", encryptionUseCase.encryptData(request.getDinBody().getAccountNumber()));
 
-        DinError dinError = accountOptional.isPresent()
-                ? new DinError("T", "api-bank-management-instance-1", DinErrorCode.PURCHASE_SUCCESS.getCode(), DinErrorCode.PURCHASE_SUCCESS.getErrorCodeProveedor(), DinErrorCode.PURCHASE_SUCCESS.getMessage(), "Purchase was successful.")
-                : new DinError("E", "api-bank-management-instance-1", DinErrorCode.PURCHASE_FAILED.getCode(), DinErrorCode.PURCHASE_FAILED.getErrorCodeProveedor(), DinErrorCode.PURCHASE_FAILED.getMessage(), "Purchase failed.");
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    responseData,
+                    DinErrorCode.PURCHASE_SUCCESS,
+                    HttpStatus.OK,
+                    "Purchase was successful."
+            );
 
-        ResponseMs<Map<String, String>> responseMs = new ResponseMs<>(request.getDinHeader(), responseData, dinError);
+        } catch (BankAccountNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.ACCOUNT_NOT_FOUND,
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            );
 
-        return accountOptional.isPresent() ? ResponseEntity.ok(responseMs) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMs);
+        } catch (CustomerNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.CUSTOMER_NOT_FOUND,
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            );
+
+        } catch (InvalidPurchaseTypeException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.PURCHASE_FAILED,
+                    HttpStatus.BAD_REQUEST,
+                    e.getMessage()
+            );
+
+        } catch (InsufficientFundsException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.PURCHASE_FAILED,
+                    HttpStatus.BAD_REQUEST,
+                    e.getMessage()
+            );
+
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.PURCHASE_FAILED,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
+        }
     }
+
 
     @PostMapping("/withdraw")
     public ResponseEntity<ResponseMs<Map<String, String>>> processWithdraw(@RequestBody RequestMs<RequestWithdrawalDTO> request) {
@@ -95,17 +188,65 @@ public class TransactionsController {
                 .setAmount(request.getDinBody().getAmount())
                 .build();
 
-        Optional<Account> accountOptional = processWithdrawUseCase.apply(withdrawal);
+        try {
+            Optional<Account> accountOptional = processWithdrawUseCase.apply(withdrawal);
 
-        Map<String, String> responseData = new HashMap<>();
-        responseData.put("accountNumber", encryptionUseCase.encryptData(request.getDinBody().getAccountNumber()));
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("accountNumber", encryptionUseCase.encryptData(request.getDinBody().getAccountNumber()));
 
-        DinError dinError = accountOptional.isPresent()
-                ? new DinError("T", "api-bank-management-instance-1", DinErrorCode.WITHDRAWAL_SUCCESS.getCode(), DinErrorCode.WITHDRAWAL_SUCCESS.getErrorCodeProveedor(), DinErrorCode.WITHDRAWAL_SUCCESS.getMessage(), "Withdrawal was successful.")
-                : new DinError("E", "api-bank-management-instance-1", DinErrorCode.WITHDRAWAL_FAILED.getCode(), DinErrorCode.WITHDRAWAL_FAILED.getErrorCodeProveedor(), DinErrorCode.WITHDRAWAL_FAILED.getMessage(), "Withdrawal failed.");
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    responseData,
+                    DinErrorCode.WITHDRAWAL_SUCCESS,
+                    HttpStatus.OK,
+                    "Withdrawal was successful."
+            );
 
-        ResponseMs<Map<String, String>> responseMs = new ResponseMs<>(request.getDinHeader(), responseData, dinError);
+        } catch (InvalidAmountException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.WITHDRAWAL_FAILED,
+                    HttpStatus.BAD_REQUEST,
+                    e.getMessage()
+            );
 
-        return accountOptional.isPresent() ? ResponseEntity.ok(responseMs) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMs);
+        } catch (BankAccountNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.ACCOUNT_NOT_FOUND,
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            );
+
+        } catch (CustomerNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.CUSTOMER_NOT_FOUND,
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            );
+
+        } catch (InsufficientFundsException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.WITHDRAWAL_FAILED,
+                    HttpStatus.BAD_REQUEST,
+                    e.getMessage()
+            );
+
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.WITHDRAWAL_FAILED,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
+        }
     }
+
 }

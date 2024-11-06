@@ -2,6 +2,7 @@ package com.bank.management.usecase;
 
 import com.bank.management.Account;
 import com.bank.management.Customer;
+import com.bank.management.exception.AccountCreationException;
 import com.bank.management.exception.BankAccountAlreadyExistsException;
 import com.bank.management.exception.CustomerNotFoundException;
 import com.bank.management.gateway.AccountRepository;
@@ -37,9 +38,13 @@ public class CreateBankAccountUseCase {
                 .build();
 
         accountToCreate.setCustomer(customerFound);
+
         Optional<Account> accountCreated = bankAccountRepository.save(accountToCreate);
-        return accountCreated.orElse(null);
+
+        // Lanzamos una excepción si no se pudo crear la cuenta
+        return accountCreated.orElseThrow(() -> new AccountCreationException("Failed to create account for customer: " + customer.getId()));
     }
+
 
     private String generateAccountNumber() {
 

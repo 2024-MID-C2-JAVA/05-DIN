@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/domain/usecases" />
             <option value="$PROJECT_DIR$/infrastructure/driven-adapters/mongodb-repository" />
             <option value="$PROJECT_DIR$/infrastructure/driven-adapters/postgres-repository" />
+            <option value="$PROJECT_DIR$/infrastructure/entry-points/din" />
             <option value="$PROJECT_DIR$/infrastructure/entry-points/web" />
             <option value="$PROJECT_DIR$/infrastructure/helper/aes-encryption" />
           </set>

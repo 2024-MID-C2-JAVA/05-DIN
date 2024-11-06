@@ -1,10 +1,9 @@
 package com.bank.management;
 
 import com.bank.management.data.*;
-import com.bank.management.din.DinError;
-import com.bank.management.din.DinErrorCode;
-import com.bank.management.din.RequestMs;
-import com.bank.management.din.ResponseMs;
+import com.bank.management.exception.AccountCreationException;
+import com.bank.management.exception.BankAccountNotFoundException;
+import com.bank.management.exception.CustomerNotFoundException;
 import com.bank.management.usecase.CreateBankAccountUseCase;
 import com.bank.management.usecase.DeleteBankAccountUseCase;
 import com.bank.management.usecase.GetAccountsByCustomerUseCase;
@@ -39,22 +38,52 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<ResponseMs<Map<String, String>>> createAccount(@RequestBody RequestMs<RequestCreateAccountDTO> request) {
-
         request.validateDinHeaderFields();
 
         Account accountDomain = new Account.Builder().amount(request.getDinBody().getAmount()).build();
         Customer customerDomain = new Customer.Builder().id(request.getDinBody().getCustomerId()).build();
 
-        Account accountCreated = createBankAccountUseCase.apply(accountDomain, customerDomain);
+        try {
+            Account accountCreated = createBankAccountUseCase.apply(accountDomain, customerDomain);
 
-        DinErrorCode dinErrorCode = accountCreated != null ? DinErrorCode.ACCOUNT_CREATED : DinErrorCode.ERROR_CREATING_ACCOUNT;
-        DinError dinError = new DinError("T", "api-bank-management-instance-1", dinErrorCode.getCode(), dinErrorCode.getErrorCodeProveedor(), dinErrorCode.getMessage(), "Account creation process completed.");
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("accountNumber", accountCreated.getNumber());
 
-        Map<String, String> responseData = new HashMap<>();
-        responseData.put("accountNumber", accountCreated != null ? accountCreated.getNumber() : "");
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    responseData,
+                    DinErrorCode.ACCOUNT_CREATED,
+                    HttpStatus.CREATED,
+                    "Account creation process completed."
+            );
 
-        ResponseMs<Map<String, String>> responseMs = new ResponseMs<>(request.getDinHeader(), responseData, dinError);
-        return accountCreated != null ? ResponseEntity.ok(responseMs) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMs);
+        } catch (CustomerNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.ERROR_CREATING_ACCOUNT,
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            );
+
+        } catch (AccountCreationException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.ERROR_CREATING_ACCOUNT,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
+
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.UNKNOWN_ERROR,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
+        }
     }
 
     @PostMapping("/customer/get-accounts")
@@ -71,10 +100,13 @@ public class AccountController {
                         .build())
                 .collect(Collectors.toList());
 
-        DinError dinError = new DinError("T", "api-bank-management-instance-1", DinErrorCode.SUCCESS.getCode(), DinErrorCode.SUCCESS.getErrorCodeProveedor(), DinErrorCode.SUCCESS.getMessage(), "Customer accounts were retrieved successfully.");
-        ResponseMs<List<BankAccountDTO>> responseMs = new ResponseMs<>(request.getDinHeader(), accountDTOs, dinError);
-
-        return ResponseEntity.ok(responseMs);
+        return ResponseBuilder.buildResponse(
+                request.getDinHeader(),
+                accountDTOs,
+                DinErrorCode.ACCOUNT_CREATED,
+                HttpStatus.CREATED,
+                "Account creation process completed."
+        );
     }
 
     @PostMapping("/get")
@@ -82,41 +114,80 @@ public class AccountController {
 
         request.validateDinHeaderFields();
 
-        Account account = getBankAccountUseCase.apply(request.getDinBody().getId());
+        try {
+            Account account = getBankAccountUseCase.apply(request.getDinBody().getId());
 
-        if (account == null) {
-            DinError dinError = new DinError("E", "api-bank-management-instance-1", DinErrorCode.ACCOUNT_NOT_FOUND.getCode(), DinErrorCode.ACCOUNT_NOT_FOUND.getErrorCodeProveedor(), DinErrorCode.ACCOUNT_NOT_FOUND.getMessage(), "No account found with the provided ID.");
-            ResponseMs<BankAccountDTO> responseMs = new ResponseMs<>(request.getDinHeader(), null, dinError);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMs);
+            BankAccountDTO accountDTO = new BankAccountDTO.Builder()
+                    .number(account.getNumber())
+                    .amount(account.getAmount())
+                    .build();
+
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    accountDTO,
+                    DinErrorCode.SUCCESS,
+                    HttpStatus.OK,
+                    "Account information was retrieved successfully."
+            );
+
+        } catch (BankAccountNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.ACCOUNT_NOT_FOUND,
+                    HttpStatus.NOT_FOUND,
+                    "No account found with the provided ID."
+            );
         }
-
-        BankAccountDTO accountDTO = new BankAccountDTO.Builder()
-                .number(account.getNumber())
-                .amount(account.getAmount())
-                .build();
-
-        DinError dinError = new DinError("T", "api-bank-management-instance-1", DinErrorCode.SUCCESS.getCode(), DinErrorCode.SUCCESS.getErrorCodeProveedor(), DinErrorCode.SUCCESS.getMessage(), "Account information was retrieved successfully.");
-        ResponseMs<BankAccountDTO> responseMs = new ResponseMs<>(request.getDinHeader(), accountDTO, dinError);
-
-        return ResponseEntity.ok(responseMs);
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<ResponseMs<Map<String, String>>> deleteBankAccount(@RequestBody RequestMs<RequestGetBankAccountDTO> request) {
+    public ResponseEntity<com.bank.management.ResponseMs<Map<String, String>>> deleteBankAccount(@RequestBody RequestMs<RequestGetBankAccountDTO> request) {
 
         request.validateDinHeaderFields();
 
-        boolean isDeleted = deleteBankAccountUseCase.apply(request.getDinBody().getId());
-        Map<String, String> responseData = new HashMap<>();
-        responseData.put("accountNumber", request.getDinBody().getId());
+        try {
+            boolean isDeleted = deleteBankAccountUseCase.apply(request.getDinBody().getId());
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("accountNumber", request.getDinBody().getId());
 
-        DinErrorCode dinErrorCode = isDeleted ? DinErrorCode.ACCOUNT_DELETED : DinErrorCode.ERROR_DELETING_ACCOUNT;
-        DinError dinError = new DinError(isDeleted ? "T" : "E", "api-bank-management-instance-1", dinErrorCode.getCode(), dinErrorCode.getErrorCodeProveedor(), dinErrorCode.getMessage(), dinErrorCode.getMessage());
+            if (isDeleted) {
+                return ResponseBuilder.buildResponse(
+                        request.getDinHeader(),
+                        responseData,
+                        DinErrorCode.ACCOUNT_DELETED,
+                        HttpStatus.OK,
+                        "Bank account deleted successfully."
+                );
+            } else {
+                return ResponseBuilder.buildResponse(
+                        request.getDinHeader(),
+                        responseData,
+                        DinErrorCode.ERROR_DELETING_ACCOUNT,
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Failed to delete the bank account due to a system error."
+                );
+            }
 
-        ResponseMs<Map<String, String>> responseMs = new ResponseMs<Map<String, String>>(request.getDinHeader(), responseData, dinError);
+        } catch (BankAccountNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.ACCOUNT_NOT_FOUND,
+                    HttpStatus.NOT_FOUND,
+                    "No bank account found with the provided ID."
+            );
 
-        return isDeleted
-                ? ResponseEntity.ok(responseMs)
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMs);
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.ERROR_DELETING_ACCOUNT,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "An unexpected error occurred while deleting the bank account."
+            );
+        }
     }
+
+
 }

@@ -1,7 +1,8 @@
 package com.bank.management;
 
 import com.bank.management.data.*;
-import com.bank.management.din.*;
+import com.bank.management.exception.CustomerAlreadyExistsException;
+import com.bank.management.exception.CustomerNotFoundException;
 import com.bank.management.usecase.CreateCustomerUseCase;
 import com.bank.management.usecase.DeleteCustomerUseCase;
 import com.bank.management.usecase.GetAllCustomersUseCase;
@@ -40,57 +41,122 @@ public class CustomerController {
                 .username(request.getDinBody().getUsername())
                 .build();
 
-        Optional<Customer> customerCreated = createCustomerUseCase.apply(customerDomain);
+        try {
+            Optional<Customer> customerCreated = createCustomerUseCase.apply(customerDomain);
 
-        DinErrorCode dinErrorCode = customerCreated.isPresent() ? DinErrorCode.CUSTOMER_CREATED : DinErrorCode.OPERATION_FAILED;
-        DinError dinError = new DinError("T", "api-bank-management-instance-1", dinErrorCode.getCode(), dinErrorCode.getErrorCodeProveedor(), dinErrorCode.getMessage(), "Customer creation process completed.");
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("username", customerCreated.map(Customer::getUsername).orElse(""));
 
-        Map<String, String> responseData = new HashMap<>();
-        responseData.put("username", customerCreated.map(Customer::getUsername).orElse(""));
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    responseData,
+                    DinErrorCode.CUSTOMER_CREATED,
+                    HttpStatus.CREATED,
+                    "Customer creation process completed."
+            );
 
-        ResponseMs<Map<String, String>> responseMs = new ResponseMs<>(request.getDinHeader(), responseData, dinError);
+        } catch (CustomerAlreadyExistsException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.OPERATION_FAILED,
+                    HttpStatus.CONFLICT,
+                    e.getMessage()
+            );
 
-        return ResponseEntity.ok(responseMs);
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.OPERATION_FAILED,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
+        }
     }
-
 
     @PostMapping("/delete")
     public ResponseEntity<ResponseMs<Map<String, String>>> deleteCustomer(@RequestBody RequestMs<RequestGetCustomerDTO> request) {
         request.validateDinHeaderFields();
-        boolean isDeleted = deleteCustomerUseCase.apply(request.getDinBody().getId());
 
-        Map<String, String> responseData = new HashMap<>();
-        responseData.put("id", String.valueOf(request.getDinBody().getId()));
+        try {
+            boolean isDeleted = deleteCustomerUseCase.apply(request.getDinBody().getId());
 
-        DinErrorCode dinErrorCode = isDeleted ? DinErrorCode.CUSTOMER_DELETED : DinErrorCode.OPERATION_FAILED;
-        DinError dinError = new DinError(isDeleted ? "T" : "E", "api-bank-management-instance-1", dinErrorCode.getCode(), dinErrorCode.getErrorCodeProveedor(), dinErrorCode.getMessage(), isDeleted ? "Customer deleted successfully." : "Error deleting customer");
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("id", String.valueOf(request.getDinBody().getId()));
 
-        ResponseMs<Map<String, String>> responseMs = new ResponseMs<>(request.getDinHeader(), responseData, dinError);
+            if (isDeleted) {
+                return ResponseBuilder.buildResponse(
+                        request.getDinHeader(),
+                        responseData,
+                        DinErrorCode.CUSTOMER_DELETED,
+                        HttpStatus.OK,
+                        "Customer deleted successfully."
+                );
+            } else {
+                return ResponseBuilder.buildResponse(
+                        request.getDinHeader(),
+                        responseData,
+                        DinErrorCode.OPERATION_FAILED,
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Error deleting customer."
+                );
+            }
 
-        return isDeleted
-                ? ResponseEntity.ok(responseMs)
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMs);
+        } catch (CustomerNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.CUSTOMER_NOT_FOUND,
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            );
+
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.OPERATION_FAILED,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
+        }
     }
+
 
 
     @GetMapping
     public ResponseEntity<ResponseMs<List<CustomerDTO>>> getAllCustomers(@RequestBody RequestMs<DinHeader> request) {
         request.validateDinHeaderFields();
 
-        List<Customer> customers = getAllCustomersUseCase.apply();
+        try {
+            List<Customer> customers = getAllCustomersUseCase.apply();
 
-        List<CustomerDTO> customerDTOs = customers.stream()
-                .map(customer -> new CustomerDTO.Builder()
-                        .setUsername(customer.getUsername())
-                        .build())
-                .collect(Collectors.toList());
+            List<CustomerDTO> customerDTOs = customers.stream()
+                    .map(customer -> new CustomerDTO.Builder()
+                            .setUsername(customer.getUsername())
+                            .build())
+                    .collect(Collectors.toList());
 
-        DinError dinError = new DinError("T", "api-bank-management-instance-1", DinErrorCode.SUCCESS.getCode(), DinErrorCode.SUCCESS.getErrorCodeProveedor(), DinErrorCode.SUCCESS.getMessage(), "All customers retrieved successfully.");
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    customerDTOs,
+                    DinErrorCode.SUCCESS,
+                    HttpStatus.OK,
+                    "All customers retrieved successfully."
+            );
 
-        ResponseMs<List<CustomerDTO>> responseMs = new ResponseMs<>(request.getDinHeader(), customerDTOs, dinError);
-
-        return ResponseEntity.ok(responseMs);
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.OPERATION_FAILED,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "An unexpected error occurred while retrieving all customers."
+            );
+        }
     }
+
 
 
     @PostMapping("/get")
@@ -98,22 +164,39 @@ public class CustomerController {
 
         request.validateDinHeaderFields();
 
-        Customer customer = getCustomerByidUseCase.apply(request.getDinBody().getId());
+        try {
+            Customer customer = getCustomerByidUseCase.apply(request.getDinBody().getId());
 
-        if (customer == null) {
-            DinError dinError = new DinError("E", "api-bank-management-instance-1", DinErrorCode.CUSTOMER_NOT_FOUND.getCode(), DinErrorCode.CUSTOMER_NOT_FOUND.getErrorCodeProveedor(), DinErrorCode.CUSTOMER_NOT_FOUND.getMessage(), "No customer found with the provided ID.");
-            ResponseMs<CustomerDTO> responseMs = new ResponseMs<>(request.getDinHeader(), null, dinError);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseMs);
+            CustomerDTO customerDTO = new CustomerDTO.Builder()
+                    .setUsername(customer.getUsername())
+                    .build();
+
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    customerDTO,
+                    DinErrorCode.SUCCESS,
+                    HttpStatus.OK,
+                    "Customer retrieved successfully."
+            );
+
+        } catch (CustomerNotFoundException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.CUSTOMER_NOT_FOUND,
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            );
+
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.OPERATION_FAILED,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage()
+            );
         }
-
-        CustomerDTO customerDTO = new CustomerDTO.Builder()
-                .setUsername(customer.getUsername())
-                .build();
-
-        DinError dinError = new DinError("T", "api-bank-management-instance-1", DinErrorCode.SUCCESS.getCode(), DinErrorCode.SUCCESS.getErrorCodeProveedor(), DinErrorCode.SUCCESS.getMessage(), "Customer retrieved successfully.");
-
-        ResponseMs<CustomerDTO> responseMs = new ResponseMs<>(request.getDinHeader(), customerDTO, dinError);
-
-        return ResponseEntity.ok(responseMs);
     }
+
 }
