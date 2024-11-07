@@ -1,0 +1,9 @@
+dependencies {
+    implementation project(':domain:usecases')
+    implementation project(':common:exceptions')
+
+    implementation project(':domain:model')
+    implementation project(':infrastructure:driven_adapters:encriptacion')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
