@@ -4,9 +4,6 @@ findProject(':shared-business-models').projectDir = file("./shared/business/mode
 include ':shared-business-use-cases'
 findProject(':shared-business-use-cases').projectDir = file("./shared/business/use-cases")
 
-include ':shared-infrastructure-entry-points-rest'
-findProject(':shared-infrastructure-entry-points-rest').projectDir = file("./shared/infrastructure/entry-points/rest")
-
 include ':cuentaflex-applications-account-service'
 findProject(':cuentaflex-applications-account-service').projectDir = file("./cuentaflex/applications/account-service")
 
@@ -30,3 +27,6 @@ findProject(':cuentaflex-infrastructure-entry-points-rest').projectDir = file(".
 
 include ':core-cryptography-aes'
 findProject(':core-cryptography-aes').projectDir = file("./core/cryptography/aes")
+
+include ':shared-infrastructure-entry-points-din'
+findProject(':shared-infrastructure-entry-points-din').projectDir = file("./shared/infrastructure/entry-points/din")

@@ -1,15 +1,24 @@
 package co.com.sofka.cuentaflex.business.usecases.customer.createaccount;
 
 import co.com.sofka.shared.business.usecases.Error;
+import co.com.sofka.shared.business.usecases.ErrorType;
 
 public final class CreateCustomerAccountErrors {
     public static final Error CUSTOMER_NOT_FOUND = new Error(
-            "CUSTOMER_NOT_FOUND",
-            "Customer not found."
+            ErrorType.WARNING,
+            "Database",
+            "1008",
+            null,
+            "Customer not found.",
+            "The customer with the id %s was not found in the requested context."
     );
 
     public static final Error NEGATIVE_INITIAL_AMOUNT = new Error(
-            "NEGATIVE_INITIAL_AMOUNT",
-            "The initial amount cannot be less than 0."
+            ErrorType.WARNING,
+            "User",
+            "3001",
+            null,
+            "The amount to deposit doesn't reach the minimum value",
+            "The amount to deposit must be greater than $0.00"
     );
 }

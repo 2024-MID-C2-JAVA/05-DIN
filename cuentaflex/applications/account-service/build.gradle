@@ -1,8 +1,8 @@
 dependencies {
     implementation project(':shared-business-use-cases')
     implementation project(':cuentaflex-business-use-cases')
-    //implementation project(':cuentaflex-infrastructure-driven-adapters-postgres-repository')
-    implementation project(':cuentaflex-infrastructure-driven-adapters-mongo-repository')
+    implementation project(':cuentaflex-infrastructure-driven-adapters-postgres-repository')
+    //implementation project(':cuentaflex-infrastructure-driven-adapters-mongo-repository')
     implementation project(':cuentaflex-infrastructure-entry-points-rest')
 
     implementation 'org.springframework.boot:spring-boot-starter'

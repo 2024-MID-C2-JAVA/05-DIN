@@ -1,13 +1,14 @@
 package co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.endpoints.customer.getaccount;
 
-import co.com.sofka.cuentaflex.business.usecases.customer.createaccount.CreateCustomerAccountErrors;
 import co.com.sofka.cuentaflex.business.usecases.customer.getaccount.GetCustomerAccountErrors;
 import co.com.sofka.cuentaflex.business.usecases.customer.getaccount.GetCustomerAccountRequest;
 import co.com.sofka.cuentaflex.business.usecases.customer.getaccount.GetCustomerAccountResponse;
 import co.com.sofka.cuentaflex.business.usecases.customer.getaccount.GetCustomerAccountUseCase;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.constants.CustomerEndpointsConstants;
 import co.com.sofka.shared.business.usecases.ResultWith;
-import co.com.sofka.shared.infrastructure.entrypoints.rest.ErrorMapper;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinErrorMapper;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinRequest;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +34,10 @@ public final class GetCustomerAccountEndpoint {
     }
 
     @GetMapping
-    public ResponseEntity<?> getCustomerAccount(@RequestBody GetCustomerAccountRequestDto request) {
-        GetCustomerAccountRequest useCaseRequest = GetCustomerAccountMapper.fromDtoToUseCaseRequest(request);
+    public ResponseEntity<DinResponse<GetCustomerAccountResponseDto>> getCustomerAccount(
+            @RequestBody DinRequest<GetCustomerAccountRequestDto> request
+    ) {
+        GetCustomerAccountRequest useCaseRequest = GetCustomerAccountMapper.fromDinToUseCaseRequest(request);
         ResultWith<GetCustomerAccountResponse> useCaseResponse = this.getCustomerAccountUseCase.execute(useCaseRequest);
 
         if(useCaseResponse.isFailure()) {
@@ -43,9 +46,16 @@ public final class GetCustomerAccountEndpoint {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
 
-            return ResponseEntity.status(status).body(ErrorMapper.fromUseCaseToDtoError(useCaseResponse.getError()));
+            return ResponseEntity.status(status)
+                    .body(DinErrorMapper.fromUseCaseToDinResponse(
+                            request.getDinHeader(), useCaseResponse.getError(),
+                            request.getDinBody().getAccountId()
+                    ));
         }
 
-        return ResponseEntity.ok(GetCustomerAccountMapper.fromUseCaseToDtoResponse(useCaseResponse.getValue()));
+        return ResponseEntity.ok(GetCustomerAccountMapper.fromUseCaseToDinResponse(
+                request.getDinHeader(),
+                useCaseResponse.getValue())
+        );
     }
 }

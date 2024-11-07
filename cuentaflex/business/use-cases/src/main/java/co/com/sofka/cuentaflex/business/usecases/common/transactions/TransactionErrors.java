@@ -1,20 +1,34 @@
 package co.com.sofka.cuentaflex.business.usecases.common.transactions;
 
 import co.com.sofka.shared.business.usecases.Error;
+import co.com.sofka.shared.business.usecases.ErrorType;
 
 public class TransactionErrors {
     public static final Error ACCOUNT_NOT_FOUND = new co.com.sofka.shared.business.usecases.Error(
-            "ACCOUNT_NOT_FOUND",
-            "The account was not found."
+                ErrorType.WARNING,
+            "Database",
+            "1002",
+            null,
+            "The account was not found.",
+            "The account with the id %s was not found in the requested context."
+
     );
 
     public static final Error INVALID_AMOUNT = new Error(
-            "INVALID_AMOUNT",
-            "The amount to deposit doesn't reach the minimum value"
+            ErrorType.WARNING,
+            "User",
+            "3001",
+            null,
+            "The amount to deposit doesn't reach the minimum value",
+            "The amount to deposit must be greater than $%s"
     );
 
     public static final Error INSUFFICIENT_FUNDS = new Error(
-            "INSUFFICIENT_FUNDS",
-            "Insufficient funds to do the transaction"
+            ErrorType.WARNING,
+            "User",
+            "1003",
+            null,
+            "Insufficient funds to do the transaction",
+            "The account doesn't have enough funds to do the transaction"
     );
 }

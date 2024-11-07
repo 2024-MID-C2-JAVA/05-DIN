@@ -6,7 +6,9 @@ import co.com.sofka.cuentaflex.business.usecases.customer.createaccount.CreateCu
 import co.com.sofka.cuentaflex.business.usecases.customer.createaccount.CreateCustomerAccountUseCase;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.constants.CustomerEndpointsConstants;
 import co.com.sofka.shared.business.usecases.ResultWith;
-import co.com.sofka.shared.infrastructure.entrypoints.rest.ErrorMapper;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinErrorMapper;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinRequest;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +35,10 @@ public final class CreateCustomerAccountEndpoint {
     }
 
     @PostMapping
-    public ResponseEntity<?> createCustomerAccountResponse(
-            @RequestBody CreateCustomerAccountRequestDto createCustomerAccountRequestDto
+    public ResponseEntity<DinResponse<CreateCustomerAccountResponseDto>> createCustomerAccountResponse(
+            @RequestBody DinRequest<CreateCustomerAccountRequestDto> createCustomerAccountRequestDto
     ) {
-        CreateCustomerAccountRequest useCaseRequest = CreateCustomerAccountMapper.fromDtoToUseCaseRequest(createCustomerAccountRequestDto);
+        CreateCustomerAccountRequest useCaseRequest = CreateCustomerAccountMapper.fromDinToUseCaseRequest(createCustomerAccountRequestDto);
         ResultWith<CreateCustomerAccountResponse> useCaseResponse = createCustomerAccountUseCase.execute(useCaseRequest);
         if (useCaseResponse.isFailure()) {
             HttpStatus status = ERROR_STATUS_MAP.getOrDefault(
@@ -44,11 +46,22 @@ public final class CreateCustomerAccountEndpoint {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
 
-            return ResponseEntity.status(status).body(ErrorMapper.fromUseCaseToDtoError(useCaseResponse.getError()));
+            return ResponseEntity.status(status).body(
+                    DinErrorMapper.fromUseCaseToDinResponse(
+                            createCustomerAccountRequestDto.getDinHeader(),
+                            useCaseResponse.getError(),
+                            createCustomerAccountRequestDto.getDinBody().getCustomerId()
+                    )
+            );
         }
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(CreateCustomerAccountMapper.fromUseCaseToDtoResponse(useCaseResponse.getValue()));
+                .body(
+                        CreateCustomerAccountMapper.fromUseCaseToDinResponse(
+                                createCustomerAccountRequestDto.getDinHeader(),
+                                useCaseResponse.getValue()
+                        )
+                );
     }
 }

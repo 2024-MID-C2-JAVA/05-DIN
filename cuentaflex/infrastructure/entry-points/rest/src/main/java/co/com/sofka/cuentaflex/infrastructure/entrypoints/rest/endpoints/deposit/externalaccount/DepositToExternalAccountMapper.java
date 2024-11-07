@@ -2,21 +2,27 @@ package co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.endpoints.deposi
 
 import co.com.sofka.cuentaflex.business.usecases.deposit.externalaccount.DepositToExternalAccountRequest;
 import co.com.sofka.cuentaflex.business.usecases.deposit.externalaccount.DepositToExternalAccountResponse;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinHeader;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinRequest;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinResponse;
 
 public final class DepositToExternalAccountMapper {
-    public static DepositToExternalAccountRequest fromDtoToUseCaseRequest(DepositToExternalAccountRequestDto requestDto) {
+    public static DepositToExternalAccountRequest fromDinToUseCaseRequest(DinRequest<DepositToExternalAccountRequestDto> requestDto) {
         return new DepositToExternalAccountRequest(
-                requestDto.getCustomerId(),
-                requestDto.getAccountId(),
-                requestDto.getAmount(),
-                requestDto.getEncryptedAccountNumberToDeposit(),
-                requestDto.getInitializationVector(),
-                requestDto.getSecretKey()
+                requestDto.getDinBody().getCustomerId(),
+                requestDto.getDinBody().getAccountId(),
+                requestDto.getDinBody().getAmount(),
+                requestDto.getDinBody().getEncryptedAccountNumberToDeposit(),
+                requestDto.getDinHeader().getInitializationVector(),
+                requestDto.getDinHeader().getSymmetricKey()
         );
     }
 
-    public static DepositToExternalAccountResponseDto fromUseCaseToDtoResponse(DepositToExternalAccountResponse response) {
-        return new DepositToExternalAccountResponseDto(
+    public static DinResponse<DepositToExternalAccountResponseDto> fromUseCaseToDinResponse(
+            DinHeader dinHeader,
+            DepositToExternalAccountResponse response
+    ) {
+        DepositToExternalAccountResponseDto responseDto = new DepositToExternalAccountResponseDto(
                 response.getTransactionId(),
                 response.getAmount(),
                 response.getCost(),
@@ -24,5 +30,7 @@ public final class DepositToExternalAccountMapper {
                 response.getEncryptedPayrollAccountNumber(),
                 response.getEncryptedSupplierAccountNumber()
         );
+
+        return new DinResponse<>(dinHeader, responseDto);
     }
 }

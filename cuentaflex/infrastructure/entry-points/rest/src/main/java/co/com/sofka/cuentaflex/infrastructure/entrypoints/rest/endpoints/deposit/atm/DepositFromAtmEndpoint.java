@@ -1,15 +1,19 @@
 package co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.endpoints.deposit.atm;
 
+import co.com.sofka.cuentaflex.business.usecases.common.transactions.FeesValues;
 import co.com.sofka.cuentaflex.business.usecases.common.transactions.TransactionDoneResponse;
 import co.com.sofka.cuentaflex.business.usecases.common.transactions.TransactionErrors;
 import co.com.sofka.cuentaflex.business.usecases.common.transactions.UnidirectionalTransactionRequest;
 import co.com.sofka.cuentaflex.business.usecases.deposit.atm.DepositFromAtmUseCase;
+import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.common.dtos.TransactionDoneDto;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.common.dtos.UnidirectionalTransactionDto;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.common.mappers.TransactionDoneMapper;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.common.mappers.UnidirectionalTransactionMapper;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.constants.AccountEndpointsConstants;
 import co.com.sofka.shared.business.usecases.ResultWith;
-import co.com.sofka.shared.infrastructure.entrypoints.rest.ErrorMapper;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinErrorMapper;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinRequest;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +27,7 @@ import java.util.Map;
 @Tag(name = "Account Deposits")
 public final class DepositFromAtmEndpoint {
     private final DepositFromAtmUseCase depositFromAtmUseCase;
+    private final FeesValues feesValues;
 
     private static final Map<String, HttpStatus> ERROR_STATUS_MAP = new HashMap<>();
 
@@ -31,13 +36,16 @@ public final class DepositFromAtmEndpoint {
         ERROR_STATUS_MAP.put(TransactionErrors.INVALID_AMOUNT.getCode(), HttpStatus.BAD_REQUEST);
     }
 
-    public DepositFromAtmEndpoint(DepositFromAtmUseCase depositFromAtmUseCase) {
+    public DepositFromAtmEndpoint(DepositFromAtmUseCase depositFromAtmUseCase, FeesValues feesValues) {
         this.depositFromAtmUseCase = depositFromAtmUseCase;
+        this.feesValues = feesValues;
     }
 
     @PostMapping
-    public ResponseEntity<?> deposit(@RequestBody UnidirectionalTransactionDto requestDto) {
-        UnidirectionalTransactionRequest request = UnidirectionalTransactionMapper.fromDtoToUseCaseRequest(requestDto);
+    public ResponseEntity<DinResponse<TransactionDoneDto>>  deposit(
+            @RequestBody DinRequest<UnidirectionalTransactionDto> requestDto
+    ) {
+        UnidirectionalTransactionRequest request = UnidirectionalTransactionMapper.fromDinToUseCaseRequest(requestDto);
 
         ResultWith<TransactionDoneResponse> result = this.depositFromAtmUseCase.execute(request);
 
@@ -47,9 +55,33 @@ public final class DepositFromAtmEndpoint {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
 
-            return ResponseEntity.status(status).body(ErrorMapper.fromUseCaseToDtoError(result.getError()));
+            return ResponseEntity.status(status).body(
+                    DinErrorMapper.fromUseCaseToDinResponse(
+                            requestDto.getDinHeader(),
+                            result.getError(),
+                            getErrorDetails(requestDto, result)
+                    )
+            );
         }
 
-        return ResponseEntity.ok(TransactionDoneMapper.fromUseCaseToDtoResponse(result.getValue()));
+        return ResponseEntity.ok(
+                TransactionDoneMapper.fromUseCaseToDinResponse(requestDto.getDinHeader(), result.getValue())
+        );
+    }
+
+    private String[] getErrorDetails(DinRequest<UnidirectionalTransactionDto> requestDto, ResultWith<TransactionDoneResponse> result) {
+        if(result.isSuccess()) {
+            return new String[0];
+        }
+
+        if(result.getError().getCode().equals(TransactionErrors.INVALID_AMOUNT.getCode())) {
+            return new String[] {this.feesValues.getDepositFromAtmFee().toString()};
+        }
+
+        if(result.getError().getCode().equals(TransactionErrors.ACCOUNT_NOT_FOUND.getCode())) {
+            return new String[] {requestDto.getDinBody().getAccountId()};
+        }
+
+        return new String[0];
     }
 }

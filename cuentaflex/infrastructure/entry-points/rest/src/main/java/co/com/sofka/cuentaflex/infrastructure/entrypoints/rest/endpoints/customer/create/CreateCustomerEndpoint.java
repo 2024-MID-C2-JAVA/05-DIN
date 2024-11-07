@@ -5,6 +5,8 @@ import co.com.sofka.cuentaflex.business.usecases.customer.create.CreateCustomerR
 import co.com.sofka.cuentaflex.business.usecases.customer.create.CreateCustomerUseCase;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.constants.CustomerEndpointsConstants;
 import co.com.sofka.shared.business.usecases.ResultWith;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinRequest;
+import co.com.sofka.shared.infrastructure.entrypoints.din.DinResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +26,18 @@ public final class CreateCustomerEndpoint {
     }
 
     @PostMapping
-    public ResponseEntity<CreateCustomerResponseDto> handle(@RequestBody CreateCustomerRequestDto createCustomerRequestDto) {
-        CreateCustomerRequest createCustomerRequest = CreateCustomerMapper.fromDtoToUseCaseRequest(createCustomerRequestDto);
+    public ResponseEntity<DinResponse<CreateCustomerResponseDto>> handle(
+            @RequestBody DinRequest<CreateCustomerRequestDto> createCustomerRequestDto
+    ) {
+        CreateCustomerRequest createCustomerRequest = CreateCustomerMapper.fromDinToUseCaseRequest(createCustomerRequestDto);
 
         ResultWith<CreateCustomerResponse> result = this.createCustomerUseCase.execute(createCustomerRequest);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(CreateCustomerMapper.fromUseCaseToDtoResponse(result.getValue()));
+                .body(CreateCustomerMapper.fromUseCaseToDinResponse(
+                        createCustomerRequestDto.getDinHeader(),
+                        result.getValue())
+                );
     }
 }
