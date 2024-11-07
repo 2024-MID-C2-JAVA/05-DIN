@@ -9,6 +9,8 @@ import com.example.banco_hex_yoder.encriptacion.EncripcionService;
 import com.example.banco_hex_yoder.gateway.AccountGateway;
 import com.example.banco_hex_yoder.model.Account;
 import com.example.banco_hex_yoder.usecase.retiros.RetiroEnCajero;
+import com.example.banco_hex_yoder.common.exceptions.AccountNotFoundException;
+import com.example.banco_hex_yoder.common.exceptions.EncryptionException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -37,10 +39,9 @@ public class RetiroHandler {
 
             Integer cuentaOrigenNumber = Integer.parseInt(encripcionService.desencriptar(request.getDinBody().getCuentaOrigen(), symmetricKey, initializationVector));
             Account cuentaOrigen = accountGateway.findByNumber(cuentaOrigenNumber)
-                    .orElseThrow(() -> new IllegalArgumentException("Cuenta origen no encontrada"));
+                    .orElseThrow(() -> new AccountNotFoundException("Cuenta origen no encontrada"));
 
             if (!accountGateway.esCuentaDeUsuario(cuentaOrigenNumber, username)) {
-
                 DinError error = new DinError("WARNING", "1007", "El usuario no es dueño de la cuenta origen", "Usuario no autorizado");
                 response.setDinError(error);
                 response.setDinBody(null);
@@ -57,14 +58,17 @@ public class RetiroHandler {
             );
             response.setDinBody(responseBody);
 
-
             DinError dinError = new DinError("N", "0000", "Retiro realizado exitosamente", "El saldo ha sido actualizado.");
             response.setDinError(dinError);
 
+        } catch (EncryptionException e) {
+            response.setDinError(new DinError("ERROR", "1001", "Error al desencriptar", e.getMessage()));
+            response.setDinBody(null);
+        } catch (AccountNotFoundException e) {
+            response.setDinError(new DinError("WARNING", "1002", "Cuenta origen no encontrada", e.getMessage()));
+            response.setDinBody(null);
         } catch (Exception e) {
-
-            DinError error = new DinError("ERROR", "1001", "Error en el retiro en cajero", e.getMessage());
-            response.setDinError(error);
+            response.setDinError(new DinError("ERROR", "1006", "Error desconocido", e.getMessage()));
             response.setDinBody(null);
         }
 
