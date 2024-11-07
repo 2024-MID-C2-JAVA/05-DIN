@@ -1,0 +1,12 @@
+rootProject.name = 'banco_hex_yoder'
+
+
+// Definición de subproyectos
+include 'applications:app_service'
+include 'domain:model'
+include 'common:exceptions'
+include 'domain:usecases'
+include 'infrastructure:driven_adapters:postgresql_repository'
+include 'infrastructure:driven_adapters:encriptacion'
+include 'infrastructure:entry_points:web'
+include 'infrastructure:driven_adapters:mongo_repository'

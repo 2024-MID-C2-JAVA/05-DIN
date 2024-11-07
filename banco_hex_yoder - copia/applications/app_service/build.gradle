@@ -1,0 +1,50 @@
+plugins {
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':domain:usecases')
+    implementation project(':infrastructure:driven_adapters:postgresql_repository')
+    implementation project(':infrastructure:driven_adapters:encriptacion')
+    implementation project(':infrastructure:entry_points:web')
+    implementation project(':common:exceptions')
+    implementation project(':infrastructure:driven_adapters:mongo_repository')
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+}
+
+
+tasks.named('bootJar') {
+    archiveBaseName.set('app-service')
+}
+
+
+
+
+
+
+
+
+
+
+
+springBoot {
+    mainClass = 'com.example.banco_hex_yoder.MainApplication'
+}
