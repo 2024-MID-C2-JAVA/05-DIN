@@ -1,0 +1,32 @@
+include ':shared-business-models'
+findProject(':shared-business-models').projectDir = file("./shared/business/models")
+
+include ':shared-business-use-cases'
+findProject(':shared-business-use-cases').projectDir = file("./shared/business/use-cases")
+
+include ':shared-infrastructure-entry-points-rest'
+findProject(':shared-infrastructure-entry-points-rest').projectDir = file("./shared/infrastructure/entry-points/rest")
+
+include ':cuentaflex-applications-account-service'
+findProject(':cuentaflex-applications-account-service').projectDir = file("./cuentaflex/applications/account-service")
+
+include ':cuentaflex-business-models'
+findProject(':cuentaflex-business-models').projectDir = file("./cuentaflex/business/models")
+
+include ':cuentaflex-business-use-cases'
+findProject(':cuentaflex-business-use-cases').projectDir = file("./cuentaflex/business/use-cases")
+
+include 'cuentaflex-business-driven-ports'
+findProject(':cuentaflex-business-driven-ports').projectDir = file("./cuentaflex/business/driven-ports")
+
+include ':cuentaflex-infrastructure-driven-adapters-mongo-repository'
+findProject(':cuentaflex-infrastructure-driven-adapters-mongo-repository').projectDir = file("./cuentaflex/infrastructure/driven-adapters/mongo-repository")
+
+include ':cuentaflex-infrastructure-driven-adapters-postgres-repository'
+findProject(':cuentaflex-infrastructure-driven-adapters-postgres-repository').projectDir = file("./cuentaflex/infrastructure/driven-adapters/postgres-repository")
+
+include ':cuentaflex-infrastructure-entry-points-rest'
+findProject(':cuentaflex-infrastructure-entry-points-rest').projectDir = file("./cuentaflex/infrastructure/entry-points/rest")
+
+include ':core-cryptography-aes'
+findProject(':core-cryptography-aes').projectDir = file("./core/cryptography/aes")
