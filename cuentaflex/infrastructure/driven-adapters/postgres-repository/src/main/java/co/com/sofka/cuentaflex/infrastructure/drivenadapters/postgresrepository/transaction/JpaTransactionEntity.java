@@ -1,6 +1,6 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.postgresrepository.transaction;
 
-import co.com.sofka.cuentaflex.business.models.TransactionType;
+import co.com.sofka.cuentaflex.domain.models.TransactionType;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

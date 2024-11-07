@@ -1,6 +1,6 @@
 package co.com.sofka.shared.infrastructure.entrypoints.din;
 
-import co.com.sofka.shared.business.usecases.Error;
+import co.com.sofka.shared.domain.usecases.Error;
 
 public final class DinErrorMapper {
     public static DinError fromUseCaseToDinError(Error error, String... details) {

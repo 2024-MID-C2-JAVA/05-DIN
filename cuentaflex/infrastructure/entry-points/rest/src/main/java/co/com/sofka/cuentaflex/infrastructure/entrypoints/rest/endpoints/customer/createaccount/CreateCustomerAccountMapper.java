@@ -1,7 +1,7 @@
 package co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.endpoints.customer.createaccount;
 
-import co.com.sofka.cuentaflex.business.usecases.customer.createaccount.CreateCustomerAccountRequest;
-import co.com.sofka.cuentaflex.business.usecases.customer.createaccount.CreateCustomerAccountResponse;
+import co.com.sofka.cuentaflex.domain.usecases.customer.createaccount.CreateCustomerAccountRequest;
+import co.com.sofka.cuentaflex.domain.usecases.customer.createaccount.CreateCustomerAccountResponse;
 import co.com.sofka.shared.infrastructure.entrypoints.din.DinHeader;
 import co.com.sofka.shared.infrastructure.entrypoints.din.DinRequest;
 import co.com.sofka.shared.infrastructure.entrypoints.din.DinResponse;

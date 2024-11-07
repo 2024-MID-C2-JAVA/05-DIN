@@ -1,6 +1,6 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.mongorepository.account;
 
-import co.com.sofka.cuentaflex.business.models.TransactionType;
+import co.com.sofka.cuentaflex.domain.models.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

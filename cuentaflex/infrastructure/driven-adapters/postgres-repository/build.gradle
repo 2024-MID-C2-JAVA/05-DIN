@@ -1,7 +1,7 @@
 dependencies {
-    implementation project(':shared-business-models')
-    implementation project(':cuentaflex-business-models')
-    implementation project(':cuentaflex-business-driven-ports')
+    implementation project(':shared-domain-models')
+    implementation project(':cuentaflex-domain-models')
+    implementation project(':cuentaflex-domain-driven-ports')
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.postgresql:postgresql'

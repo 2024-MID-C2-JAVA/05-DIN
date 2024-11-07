@@ -1,8 +1,8 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.mongorepository.account;
 
-import co.com.sofka.cuentaflex.business.models.Account;
-import co.com.sofka.cuentaflex.business.models.AccountMovement;
-import co.com.sofka.cuentaflex.business.models.Transaction;
+import co.com.sofka.cuentaflex.domain.models.Account;
+import co.com.sofka.cuentaflex.domain.models.AccountMovement;
+import co.com.sofka.cuentaflex.domain.models.Transaction;
 
 public final class MongoAccountMapper {
     public static MongoAccountDocument toDocument(Account account) {

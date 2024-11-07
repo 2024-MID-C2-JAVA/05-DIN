@@ -1,15 +1,15 @@
 package co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.endpoints.purchase.physical;
 
-import co.com.sofka.cuentaflex.business.usecases.common.transactions.TransactionDoneResponse;
-import co.com.sofka.cuentaflex.business.usecases.common.transactions.TransactionErrors;
-import co.com.sofka.cuentaflex.business.usecases.common.transactions.UnidirectionalTransactionRequest;
-import co.com.sofka.cuentaflex.business.usecases.purchase.physical.PurchasePhysicallyUseCase;
+import co.com.sofka.cuentaflex.domain.usecases.common.transactions.TransactionDoneResponse;
+import co.com.sofka.cuentaflex.domain.usecases.common.transactions.TransactionErrors;
+import co.com.sofka.cuentaflex.domain.usecases.common.transactions.UnidirectionalTransactionRequest;
+import co.com.sofka.cuentaflex.domain.usecases.purchase.physical.PurchasePhysicallyUseCase;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.common.dtos.TransactionDoneDto;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.common.dtos.UnidirectionalTransactionDto;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.common.mappers.TransactionDoneMapper;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.common.mappers.UnidirectionalTransactionMapper;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.constants.AccountEndpointsConstants;
-import co.com.sofka.shared.business.usecases.ResultWith;
+import co.com.sofka.shared.domain.usecases.ResultWith;
 import co.com.sofka.shared.infrastructure.entrypoints.din.DinErrorMapper;
 import co.com.sofka.shared.infrastructure.entrypoints.din.DinRequest;
 import co.com.sofka.shared.infrastructure.entrypoints.din.DinResponse;

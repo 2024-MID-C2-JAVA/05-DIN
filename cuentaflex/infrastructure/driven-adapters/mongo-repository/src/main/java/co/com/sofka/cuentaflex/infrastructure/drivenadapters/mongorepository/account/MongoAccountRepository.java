@@ -1,9 +1,9 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.mongorepository.account;
 
-import co.com.sofka.cuentaflex.business.drivenports.repositories.AccountRepository;
-import co.com.sofka.cuentaflex.business.models.Account;
-import co.com.sofka.cuentaflex.business.models.AccountMovement;
-import co.com.sofka.cuentaflex.business.models.Transaction;
+import co.com.sofka.cuentaflex.domain.drivenports.repositories.AccountRepository;
+import co.com.sofka.cuentaflex.domain.models.Account;
+import co.com.sofka.cuentaflex.domain.models.AccountMovement;
+import co.com.sofka.cuentaflex.domain.models.Transaction;
 import co.com.sofka.cuentaflex.infrastructure.drivenadapters.mongorepository.customer.MongoCustomerDocument;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;

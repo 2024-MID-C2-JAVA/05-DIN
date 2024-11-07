@@ -1,7 +1,7 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.postgresrepository.customer;
 
-import co.com.sofka.cuentaflex.business.drivenports.repositories.CustomerRepository;
-import co.com.sofka.cuentaflex.business.models.Customer;
+import co.com.sofka.cuentaflex.domain.drivenports.repositories.CustomerRepository;
+import co.com.sofka.cuentaflex.domain.models.Customer;
 import org.springframework.stereotype.Repository;
 
 @Repository

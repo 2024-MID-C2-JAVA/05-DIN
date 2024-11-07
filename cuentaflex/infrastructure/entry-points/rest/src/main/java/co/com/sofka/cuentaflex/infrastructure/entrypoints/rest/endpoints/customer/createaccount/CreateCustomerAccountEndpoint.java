@@ -1,11 +1,11 @@
 package co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.endpoints.customer.createaccount;
 
-import co.com.sofka.cuentaflex.business.usecases.customer.createaccount.CreateCustomerAccountErrors;
-import co.com.sofka.cuentaflex.business.usecases.customer.createaccount.CreateCustomerAccountRequest;
-import co.com.sofka.cuentaflex.business.usecases.customer.createaccount.CreateCustomerAccountResponse;
-import co.com.sofka.cuentaflex.business.usecases.customer.createaccount.CreateCustomerAccountUseCase;
+import co.com.sofka.cuentaflex.domain.usecases.customer.createaccount.CreateCustomerAccountErrors;
+import co.com.sofka.cuentaflex.domain.usecases.customer.createaccount.CreateCustomerAccountRequest;
+import co.com.sofka.cuentaflex.domain.usecases.customer.createaccount.CreateCustomerAccountResponse;
+import co.com.sofka.cuentaflex.domain.usecases.customer.createaccount.CreateCustomerAccountUseCase;
 import co.com.sofka.cuentaflex.infrastructure.entrypoints.rest.constants.CustomerEndpointsConstants;
-import co.com.sofka.shared.business.usecases.ResultWith;
+import co.com.sofka.shared.domain.usecases.ResultWith;
 import co.com.sofka.shared.infrastructure.entrypoints.din.DinErrorMapper;
 import co.com.sofka.shared.infrastructure.entrypoints.din.DinRequest;
 import co.com.sofka.shared.infrastructure.entrypoints.din.DinResponse;

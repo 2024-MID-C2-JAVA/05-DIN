@@ -1,6 +1,6 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.postgresrepository.transaction;
 
-import co.com.sofka.cuentaflex.business.models.AccountRole;
+import co.com.sofka.cuentaflex.domain.models.AccountRole;
 import co.com.sofka.cuentaflex.infrastructure.drivenadapters.postgresrepository.account.JpaAccountEntity;
 import jakarta.persistence.*;
 

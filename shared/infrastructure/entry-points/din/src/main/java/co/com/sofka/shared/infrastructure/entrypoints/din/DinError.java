@@ -1,7 +1,7 @@
 package co.com.sofka.shared.infrastructure.entrypoints.din;
 
-import co.com.sofka.shared.business.usecases.Error;
-import co.com.sofka.shared.business.usecases.ErrorType;
+import co.com.sofka.shared.domain.usecases.Error;
+import co.com.sofka.shared.domain.usecases.ErrorType;
 
 import java.time.LocalDateTime;
 

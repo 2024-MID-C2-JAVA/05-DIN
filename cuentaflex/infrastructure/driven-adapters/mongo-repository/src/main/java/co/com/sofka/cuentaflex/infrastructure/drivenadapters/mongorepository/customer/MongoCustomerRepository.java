@@ -1,7 +1,7 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.mongorepository.customer;
 
-import co.com.sofka.cuentaflex.business.drivenports.repositories.CustomerRepository;
-import co.com.sofka.cuentaflex.business.models.Customer;
+import co.com.sofka.cuentaflex.domain.drivenports.repositories.CustomerRepository;
+import co.com.sofka.cuentaflex.domain.models.Customer;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

@@ -1,7 +1,7 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.mongorepository.account;
 
-import co.com.sofka.cuentaflex.business.models.AccountRole;
-import co.com.sofka.cuentaflex.business.models.Transaction;
+import co.com.sofka.cuentaflex.domain.models.AccountRole;
+import co.com.sofka.cuentaflex.domain.models.Transaction;
 
 public class MongoAccountTransactionDocument {
     private MongoTransactionDocument transaction;

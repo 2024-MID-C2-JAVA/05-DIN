@@ -1,6 +1,6 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.postgresrepository.customer;
 
-import co.com.sofka.cuentaflex.business.models.Customer;
+import co.com.sofka.cuentaflex.domain.models.Customer;
 
 public final class JpaCustomerMapper {
     public static Customer fromJpaToModelCustomer(JpaCustomerEntity entity) {

@@ -1,6 +1,6 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.mongorepository.customer;
 
-import co.com.sofka.cuentaflex.business.models.Customer;
+import co.com.sofka.cuentaflex.domain.models.Customer;
 
 public final class MongoCustomerMapper {
     public static MongoCustomerDocument toDocument(Customer customer) {
