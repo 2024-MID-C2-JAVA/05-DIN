@@ -219,6 +219,9 @@ public class MongoAccountRepository implements AccountRepository {
         if (accountDocument.getTransactions() == null) {
             accountDocument.setTransactions(List.of(accountTransactionDocument));
         } else {
+            if (accountDocument.getTransactions().stream().anyMatch(doc -> doc.getTransaction().getId().equals(transactionDocument.getId()))) {
+                return;
+            }
             accountDocument.getTransactions().add(accountTransactionDocument);
         }
     }
