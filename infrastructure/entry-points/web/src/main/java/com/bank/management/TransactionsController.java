@@ -1,15 +1,22 @@
 package com.bank.management;
 
-import com.bank.management.data.*;
+import com.bank.management.data.RequestDepositDTO;
+import com.bank.management.data.RequestPurchaseDTO;
+import com.bank.management.data.RequestWithdrawalDTO;
 import com.bank.management.exception.*;
 import com.bank.management.usecase.EncryptionUseCase;
 import com.bank.management.usecase.ProcessDepositUseCase;
 import com.bank.management.usecase.ProcessPurchaseWithCardUseCase;
 import com.bank.management.usecase.ProcessWithdrawUseCase;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -31,11 +38,24 @@ public class TransactionsController {
     }
 
     @PostMapping("/deposit")
-    public ResponseEntity<ResponseMs<Map<String, String>>> processDeposit(@RequestBody RequestMs<RequestDepositDTO> request) {
-
-        request.validateDinHeaderFields();
+    public ResponseEntity<ResponseMs<Map<String, String>>> processDeposit(@RequestBody RequestMs<RequestDepositDTO> request, Principal principal) {
 
         try {
+            request.validateDinHeaderFields();
+
+            String authenticatedUsername = principal.getName();
+
+            if (!authenticatedUsername.equals(request.getDinBody().getUsername())) {
+                return ResponseBuilder.buildResponse(
+                        request.getDinHeader(),
+                        null,
+                        DinErrorCode.ACCOUNT_DOESNT_BELONG,
+                        HttpStatus.FORBIDDEN,
+                        ""
+                );
+            }
+
+
             String encryptedAccountNumber = request.getDinBody().getAccountNumber();
             String symmetricKey = request.getDinHeader().getSymmetricKey();
             String initializationVector = request.getDinHeader().getInitializationVector();
@@ -43,7 +63,7 @@ public class TransactionsController {
             String decryptedAccountNumber = encryptionUseCase.decryptData(encryptedAccountNumber, symmetricKey, initializationVector);
 
             Deposit deposit = new Deposit.Builder()
-                    .customerId(request.getDinBody().getCustomerId())
+                    .username(request.getDinBody().getUsername())
                     .accountNumber(decryptedAccountNumber)
                     .amount(request.getDinBody().getAmount())
                     .type(request.getDinBody().getType())
@@ -53,9 +73,10 @@ public class TransactionsController {
             if (accountOptional.isEmpty()) {
                 throw new BankAccountNotFoundException();
             }
+            Account account = accountOptional.get();
 
             Map<String, String> responseData = new HashMap<>();
-            String availableAmount = accountOptional.get().getAmount().toString();
+            String availableAmount = account.getAmount().toString();
             responseData.put("accountNumber", encryptedAccountNumber);
             responseData.put("amount", encryptionUseCase.encryptData(availableAmount, symmetricKey, initializationVector));
 
@@ -105,9 +126,8 @@ public class TransactionsController {
     @PostMapping("/purchase-card")
     public ResponseEntity<ResponseMs<Map<String, String>>> processPurchase(@RequestBody RequestMs<RequestPurchaseDTO> request) {
 
-        request.validateDinHeaderFields();
-
         try {
+            request.validateDinHeaderFields();
             String encryptedAccountNumber = request.getDinBody().getAccountNumber();
             String symmetricKey = request.getDinHeader().getSymmetricKey();
             String initializationVector = request.getDinHeader().getInitializationVector();
@@ -175,11 +195,23 @@ public class TransactionsController {
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<ResponseMs<Map<String, String>>> processWithdraw(@RequestBody RequestMs<RequestWithdrawalDTO> request) {
-
-        request.validateDinHeaderFields();
+    public ResponseEntity<ResponseMs<Map<String, String>>> processWithdraw(@RequestBody RequestMs<RequestWithdrawalDTO> request, Principal principal) {
 
         try {
+            request.validateDinHeaderFields();
+
+            String authenticatedUsername = principal.getName();
+
+            if (!authenticatedUsername.equals(request.getDinBody().getUsername())) {
+                return ResponseBuilder.buildResponse(
+                        request.getDinHeader(),
+                        null,
+                        DinErrorCode.ACCOUNT_DOESNT_BELONG,
+                        HttpStatus.FORBIDDEN,
+                        ""
+                );
+            }
+            
             String encryptedAccountNumber = request.getDinBody().getAccountNumber();
             String symmetricKey = request.getDinHeader().getSymmetricKey();
             String initializationVector = request.getDinHeader().getInitializationVector();
@@ -187,7 +219,7 @@ public class TransactionsController {
             String decryptedAccountNumber = encryptionUseCase.decryptData(encryptedAccountNumber, symmetricKey, initializationVector);
 
             Withdrawal withdrawal = new Withdrawal.Builder()
-                    .setCustomerId(request.getDinBody().getCustomerId())
+                    .setUsername(request.getDinBody().getUsername())
                     .setAccountNumber(decryptedAccountNumber)
                     .setAmount(request.getDinBody().getAmount())
                     .build();

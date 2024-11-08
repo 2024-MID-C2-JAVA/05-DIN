@@ -3,21 +3,21 @@ package com.bank.management;
 import java.math.BigDecimal;
 
 public class Deposit {
-    private final String customerId;
+    private final String username;
     private final String accountNumber;
     private final BigDecimal amount;
     private final String type;
 
     private Deposit(Builder builder) {
-        this.customerId = builder.customerId;
+        this.username = builder.username;
         this.accountNumber = builder.accountNumber;
         this.amount = builder.amount;
         this.type = builder.type;
     }
 
     // Getters
-    public String getCustomerId() {
-        return customerId;
+    public String getusername() {
+        return username;
     }
 
     public String getAccountNumber() {
@@ -33,13 +33,13 @@ public class Deposit {
     }
 
     public static class Builder {
-        private String customerId;
+        private String username;
         private String accountNumber;
         private BigDecimal amount;
         private String type;
 
-        public Builder customerId(String customerId) {
-            this.customerId = customerId;
+        public Builder username(String username) {
+            this.username = username;
             return this;
         }
 
@@ -66,7 +66,7 @@ public class Deposit {
     @Override
     public String toString() {
         return "Deposit{" +
-                "customerId=" + customerId +
+                "username=" + username +
                 ", accountNumber='" + accountNumber + '\'' +
                 ", amount=" + amount +
                 ", type='" + type + '\'' +

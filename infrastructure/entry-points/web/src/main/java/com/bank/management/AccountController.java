@@ -1,6 +1,8 @@
 package com.bank.management;
 
-import com.bank.management.data.*;
+import com.bank.management.data.BankAccountDTO;
+import com.bank.management.data.RequestCreateAccountDTO;
+import com.bank.management.data.RequestGetBankAccountDTO;
 import com.bank.management.exception.AccountCreationException;
 import com.bank.management.exception.BankAccountNotFoundException;
 import com.bank.management.exception.CustomerNotFoundException;
@@ -38,12 +40,13 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<ResponseMs<Map<String, String>>> createAccount(@RequestBody RequestMs<RequestCreateAccountDTO> request) {
-        request.validateDinHeaderFields();
-
-        Account accountDomain = new Account.Builder().amount(request.getDinBody().getAmount()).build();
-        Customer customerDomain = new Customer.Builder().id(request.getDinBody().getCustomerId()).build();
 
         try {
+            request.validateDinHeaderFields();
+
+            Account accountDomain = new Account.Builder().amount(request.getDinBody().getAmount()).build();
+            Customer customerDomain = new Customer.Builder().id(request.getDinBody().getCustomerId()).build();
+
             Account accountCreated = createBankAccountUseCase.apply(accountDomain, customerDomain);
 
             Map<String, String> responseData = new HashMap<>();
@@ -112,9 +115,8 @@ public class AccountController {
     @PostMapping("/get")
     public ResponseEntity<ResponseMs<BankAccountDTO>> getBankAccount(@RequestBody RequestMs<RequestGetBankAccountDTO> request) {
 
-        request.validateDinHeaderFields();
-
         try {
+            request.validateDinHeaderFields();
             Account account = getBankAccountUseCase.apply(request.getDinBody().getId());
 
             BankAccountDTO accountDTO = new BankAccountDTO.Builder()
@@ -144,9 +146,8 @@ public class AccountController {
     @PostMapping("/delete")
     public ResponseEntity<ResponseMs<Map<String, String>>> deleteBankAccount(@RequestBody RequestMs<RequestGetBankAccountDTO> request) {
 
-        request.validateDinHeaderFields();
-
         try {
+            request.validateDinHeaderFields();
             boolean isDeleted = deleteBankAccountUseCase.apply(request.getDinBody().getId());
             Map<String, String> responseData = new HashMap<>();
             responseData.put("accountNumber", request.getDinBody().getId());

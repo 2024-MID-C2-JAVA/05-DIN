@@ -1,8 +1,8 @@
 package com.bank.management.mapper;
 
 import com.bank.management.Account;
-import com.bank.management.data.AccountDocument;
 import com.bank.management.Customer;
+import com.bank.management.data.AccountDocument;
 
 public class AccountMapper {
 

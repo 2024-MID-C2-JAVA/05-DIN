@@ -8,6 +8,7 @@ public enum DinErrorCode {
     INTERNAL_SERVER_ERROR("1", "1005", "Internal server error", "ERROR"),
     UNKNOWN_ERROR("1", "1006", "Unknown error", "ERROR"),
     ERROR_ENCRYPTING_DATA("1", "3006", "Error encrypting data", "ERROR"),
+    ACCOUNT_DOESNT_BELONG("2", "1007", "The user is not the owner of the source account", "WARNING"),
 
     // CUSTOMER
     CUSTOMER_NOT_FOUND("2", "1008", "Customer not found", "WARNING"),

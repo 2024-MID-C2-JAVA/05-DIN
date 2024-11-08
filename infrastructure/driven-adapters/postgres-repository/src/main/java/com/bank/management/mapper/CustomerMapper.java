@@ -2,6 +2,7 @@ package com.bank.management.mapper;
 
 import com.bank.management.Customer;
 import com.bank.management.data.CustomerEntity;
+
 import java.util.stream.Collectors;
 
 public class CustomerMapper {

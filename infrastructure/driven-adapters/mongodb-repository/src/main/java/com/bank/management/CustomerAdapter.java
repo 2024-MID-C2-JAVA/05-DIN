@@ -1,12 +1,14 @@
 package com.bank.management;
 
 import com.bank.management.data.CustomerDocument;
-import com.bank.management.mapper.CustomerMapper;
+import com.bank.management.data.UserDocument;
 import com.bank.management.gateway.CustomerRepository;
+import com.bank.management.mapper.CustomerMapper;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,9 +20,11 @@ public class CustomerAdapter implements CustomerRepository {
 
 
     private final MongoTemplate mongoTemplate;
+    private final PasswordEncoder passwordEncoder;
 
-    public CustomerAdapter(MongoTemplate mongoTemplate) {
+    public CustomerAdapter(MongoTemplate mongoTemplate, PasswordEncoder passwordEncoder) {
         this.mongoTemplate = mongoTemplate;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -43,6 +47,10 @@ public class CustomerAdapter implements CustomerRepository {
     @Override
     public Optional<Customer> save(Customer customer) {
         CustomerDocument customerDoc = CustomerMapper.toDocument(customer);
+        UserDocument user = new UserDocument();
+        user.setUsername(customer.getUsername());
+        user.setPassword(passwordEncoder.encode("1234"));
+        customerDoc.setUser(user);
         CustomerDocument savedDocument = mongoTemplate.save(customerDoc, "customer");
         Customer savedCustomer = CustomerMapper.toDomain(savedDocument);
         return Optional.of(savedCustomer);

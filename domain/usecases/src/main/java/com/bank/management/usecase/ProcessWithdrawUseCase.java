@@ -31,13 +31,13 @@ public class ProcessWithdrawUseCase {
         }
 
         Optional<Account> accountOptional = bankAccountRepository.findByNumber(withdrawal.getAccountNumber());
-        Optional<Customer> customerOptional = customerRepository.findById(withdrawal.getCustomerId().toString());
+        Optional<Customer> customerOptional = customerRepository.findByUsername(withdrawal.getUsername());
         if (accountOptional.isEmpty()) {
             throw new BankAccountNotFoundException();
         }
 
         if (customerOptional.isEmpty()) {
-            throw new CustomerNotFoundException(withdrawal.getCustomerId().toString());
+            throw new CustomerNotFoundException(withdrawal.getUsername().toString());
         }
 
         BigDecimal transactionFee = new BigDecimal("1.00");

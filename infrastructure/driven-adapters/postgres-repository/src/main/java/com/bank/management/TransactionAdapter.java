@@ -6,7 +6,6 @@ import com.bank.management.data.TransactionAccountDetailEntity;
 import com.bank.management.data.TransactionEntity;
 import com.bank.management.gateway.TransactionRepository;
 import com.bank.management.mapper.BankAccountMapper;
-import com.bank.management.mapper.TransactionAccountDetailMapper;
 import com.bank.management.mapper.TransactionMapper;
 import org.springframework.stereotype.Repository;
 

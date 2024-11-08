@@ -3,25 +3,25 @@ package com.bank.management;
 import java.math.BigDecimal;
 
 public class Withdrawal {
-    private final String customerId;
+    private final String username;
     private final String accountNumber;
     private final BigDecimal amount;
 
     private Withdrawal(Builder builder) {
-        this.customerId = builder.customerId;
+        this.username = builder.username;
         this.accountNumber = builder.accountNumber;
         this.amount = builder.amount;
     }
 
-    public Withdrawal(String customerId, String accountNumber, BigDecimal amount) {
-        this.customerId = customerId;
+    public Withdrawal(String username, String accountNumber, BigDecimal amount) {
+        this.username = username;
         this.accountNumber = accountNumber;
         this.amount = amount;
     }
 
     // Getters
-    public String getCustomerId() {
-        return customerId;
+    public String getUsername() {
+        return username;
     }
 
     public String getAccountNumber() {
@@ -33,12 +33,12 @@ public class Withdrawal {
     }
 
     public static class Builder {
-        private String customerId;
+        private String username;
         private String accountNumber;
         private BigDecimal amount;
 
-        public Builder setCustomerId(String customerId) {
-            this.customerId = customerId;
+        public Builder setUsername(String username) {
+            this.username = username;
             return this;
         }
 
@@ -60,7 +60,7 @@ public class Withdrawal {
     @Override
     public String toString() {
         return "Withdrawal{" +
-                "customerId=" + customerId +
+                "username=" + username +
                 ", accountNumber='" + accountNumber + '\'' +
                 ", amount=" + amount +
                 '}';

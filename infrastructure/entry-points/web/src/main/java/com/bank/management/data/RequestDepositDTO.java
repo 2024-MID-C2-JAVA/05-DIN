@@ -3,20 +3,20 @@ package com.bank.management.data;
 import java.math.BigDecimal;
 
 public class RequestDepositDTO {
-    private String customerId;
+    private String Username;
     private String accountNumber;
     private BigDecimal amount;
     private String type;
 
     private RequestDepositDTO(Builder builder) {
-        this.customerId = builder.customerId;
+        this.Username = builder.Username;
         this.accountNumber = builder.accountNumber;
         this.amount = builder.amount;
         this.type = builder.type;
     }
 
-    private RequestDepositDTO(String customerId, String accountNumber, BigDecimal amount, String type) {
-        this.customerId = customerId;
+    private RequestDepositDTO(String Username, String accountNumber, BigDecimal amount, String type) {
+        this.Username = Username;
         this.accountNumber = accountNumber;
         this.amount = amount;
         this.type = type;
@@ -25,8 +25,8 @@ public class RequestDepositDTO {
     // Getters
 
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setUsername(String Username) {
+        this.Username = Username;
     }
 
     public void setAccountNumber(String accountNumber) {
@@ -41,8 +41,8 @@ public class RequestDepositDTO {
         this.type = type;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public String getUsername() {
+        return Username;
     }
 
     public String getAccountNumber() {
@@ -58,13 +58,13 @@ public class RequestDepositDTO {
     }
 
     public static class Builder {
-        private String customerId;
+        private String Username;
         private String accountNumber;
         private BigDecimal amount;
         private String type;
 
-        public Builder setCustomerId(String customerId) {
-            this.customerId = customerId;
+        public Builder setUsername(String Username) {
+            this.Username = Username;
             return this;
         }
 
@@ -91,7 +91,7 @@ public class RequestDepositDTO {
     @Override
     public String toString() {
         return "RequestDepositDTO{" +
-                "customerId=" + customerId +
+                "Username=" + Username +
                 ", accountNumber='" + accountNumber + '\'' +
                 ", amount=" + amount +
                 ", type='" + type + '\'' +

@@ -1,6 +1,7 @@
 package com.bank.management.data;
 
 import jakarta.persistence.Embeddable;
+
 import java.io.Serializable;
 import java.util.Objects;
 
