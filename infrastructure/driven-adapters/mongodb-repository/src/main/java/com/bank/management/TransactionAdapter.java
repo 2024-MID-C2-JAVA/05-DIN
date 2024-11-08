@@ -1,10 +1,9 @@
 package com.bank.management;
 
-import com.bank.management.data.AccountDocument;
 import com.bank.management.data.CustomerDocument;
 import com.bank.management.data.TransactionDocument;
-import com.bank.management.mapper.TransactionMapper;
 import com.bank.management.gateway.TransactionRepository;
+import com.bank.management.mapper.TransactionMapper;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

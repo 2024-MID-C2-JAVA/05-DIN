@@ -1,7 +1,9 @@
 dependencies {
     implementation project(':use-cases')
     implementation project(':model')
+    implementation project(':jwt')
 
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.mongodb:mongodb-driver-sync:5.2.0'
+    implementation 'org.springframework.security:spring-security-core'
 }

@@ -1,6 +1,9 @@
 package com.bank.management;
 
-import com.bank.management.data.*;
+import com.bank.management.data.AllCustomerDTO;
+import com.bank.management.data.CustomerDTO;
+import com.bank.management.data.RequestCreateCustomerDTO;
+import com.bank.management.data.RequestGetCustomerDTO;
 import com.bank.management.exception.CustomerAlreadyExistsException;
 import com.bank.management.exception.CustomerNotFoundException;
 import com.bank.management.usecase.CreateCustomerUseCase;
@@ -15,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/v1/customers")
 public class CustomerController {
@@ -32,16 +35,16 @@ public class CustomerController {
         this.getCustomerByidUseCase = getCustomerByidUseCase;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ResponseMs<Map<String, String>>> createCustomer(@RequestBody RequestMs<RequestCreateCustomerDTO> request) {
 
-        request.validateDinHeaderFields();
-
-        Customer customerDomain = new Customer.Builder()
-                .username(request.getDinBody().getUsername())
-                .build();
-
         try {
+            request.validateDinHeaderFields();
+
+            Customer customerDomain = new Customer.Builder()
+                    .username(request.getDinBody().getUsername())
+                    .build();
+
             Optional<Customer> customerCreated = createCustomerUseCase.apply(customerDomain);
 
             Map<String, String> responseData = new HashMap<>();
@@ -77,9 +80,9 @@ public class CustomerController {
 
     @PostMapping("/delete")
     public ResponseEntity<ResponseMs<Map<String, String>>> deleteCustomer(@RequestBody RequestMs<RequestGetCustomerDTO> request) {
-        request.validateDinHeaderFields();
 
         try {
+            request.validateDinHeaderFields();
             boolean isDeleted = deleteCustomerUseCase.apply(request.getDinBody().getId());
 
             Map<String, String> responseData = new HashMap<>();
@@ -127,9 +130,9 @@ public class CustomerController {
 
     @GetMapping
     public ResponseEntity<ResponseMs<List<AllCustomerDTO>>> getAllCustomers(@RequestBody RequestMs<DinHeader> request) {
-        request.validateDinHeaderFields();
 
         try {
+            request.validateDinHeaderFields();
             List<Customer> customers = getAllCustomersUseCase.apply();
 
             List<AllCustomerDTO> AllcustomerDTOs = customers.stream()
@@ -163,9 +166,8 @@ public class CustomerController {
     @PostMapping("/get")
     public ResponseEntity<ResponseMs<CustomerDTO>> getCustomerById(@RequestBody RequestMs<RequestGetCustomerDTO> request) {
 
-        request.validateDinHeaderFields();
-
         try {
+            request.validateDinHeaderFields();
             Customer customer = getCustomerByidUseCase.apply(request.getDinBody().getId());
 
             CustomerDTO customerDTO = new CustomerDTO.Builder()

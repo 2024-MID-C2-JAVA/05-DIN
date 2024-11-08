@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/infrastructure/entry-points/din" />
             <option value="$PROJECT_DIR$/infrastructure/entry-points/web" />
             <option value="$PROJECT_DIR$/infrastructure/helper/aes-encryption" />
+            <option value="$PROJECT_DIR$/infrastructure/helper/jwt" />
           </set>
         </option>
       </GradleProjectSettings>

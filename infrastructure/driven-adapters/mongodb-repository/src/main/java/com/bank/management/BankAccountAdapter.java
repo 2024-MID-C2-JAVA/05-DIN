@@ -4,7 +4,6 @@ import com.bank.management.data.AccountDocument;
 import com.bank.management.data.CustomerDocument;
 import com.bank.management.gateway.AccountRepository;
 import com.bank.management.mapper.AccountMapper;
-import com.bank.management.mapper.CustomerMapper;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;

@@ -34,9 +34,9 @@ public class ProcessDepositUseCase {
         if (accountOptional.isEmpty()) {
             throw new BankAccountNotFoundException();
         }
-        Optional<Customer> customerOptional = customerRepository.findById(deposit.getCustomerId());
+        Optional<Customer> customerOptional = customerRepository.findByUsername(deposit.getusername());
         if (customerOptional.isEmpty()) {
-            throw new CustomerNotFoundException(deposit.getCustomerId());
+            throw new CustomerNotFoundException(deposit.getusername());
         }
 
         DepositType depositType;

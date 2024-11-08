@@ -1,9 +1,12 @@
 package com.bank.management;
 
 import com.bank.management.config.PostgresCustomerRepository;
+import com.bank.management.config.UserRepository;
 import com.bank.management.data.CustomerEntity;
+import com.bank.management.data.UserEntity;
 import com.bank.management.gateway.CustomerRepository;
 import com.bank.management.mapper.CustomerMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,9 +17,13 @@ import java.util.stream.Collectors;
 public class CustomerAdapter implements CustomerRepository {
 
     private final PostgresCustomerRepository customerRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public CustomerAdapter(PostgresCustomerRepository customerRepository) {
+    public CustomerAdapter(PostgresCustomerRepository customerRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -37,6 +44,10 @@ public class CustomerAdapter implements CustomerRepository {
     public Optional<Customer> save(Customer customer) {
         CustomerEntity entity = CustomerMapper.toEntity(customer);
         CustomerEntity savedEntity = customerRepository.save(entity);
+        UserEntity user = new UserEntity();
+        user.setUsername(customer.getUsername());
+        user.setPassword(passwordEncoder.encode("1234"));
+        userRepository.save(user);
         return Optional.ofNullable(CustomerMapper.toDomain(savedEntity));
     }
 
