@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(":core-cryptography-aes")
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.3.5'
+}

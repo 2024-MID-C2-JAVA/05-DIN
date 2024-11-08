@@ -30,3 +30,9 @@ findProject(':core-cryptography-aes').projectDir = file("./core/cryptography/aes
 
 include ':shared-infrastructure-entry-points-din'
 findProject(':shared-infrastructure-entry-points-din').projectDir = file("./shared/infrastructure/entry-points/din")
+
+include ':core-security-authentication'
+findProject(':core-security-authentication').projectDir = file("./core/security/authentication")
+
+include ':core-security-jwt'
+findProject(':core-security-jwt').projectDir = file("./core/security/jwt")

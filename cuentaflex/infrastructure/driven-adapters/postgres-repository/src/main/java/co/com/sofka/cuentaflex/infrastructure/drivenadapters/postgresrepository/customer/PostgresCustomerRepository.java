@@ -13,13 +13,6 @@ public class PostgresCustomerRepository implements CustomerRepository {
     }
 
     @Override
-    public Customer createCustomer(Customer customer) {
-        JpaCustomerEntity entity = JpaCustomerMapper.fromModelToJpaCustomer(customer);
-        JpaCustomerEntity savedEntity = this.jpaCustomerRepository.save(entity);
-        return JpaCustomerMapper.fromJpaToModelCustomer(savedEntity);
-    }
-
-    @Override
     public boolean existsCustomer(String customerId) {
         return this.jpaCustomerRepository.existsById(Integer.parseInt(customerId));
     }

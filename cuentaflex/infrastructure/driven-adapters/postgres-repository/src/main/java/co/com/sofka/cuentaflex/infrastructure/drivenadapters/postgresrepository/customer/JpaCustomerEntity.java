@@ -1,6 +1,7 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.postgresrepository.customer;
 
 import co.com.sofka.cuentaflex.infrastructure.drivenadapters.postgresrepository.account.JpaAccountEntity;
+import co.com.sofka.cuentaflex.infrastructure.drivenadapters.postgresrepository.user.JpaCustomerUserDetailsEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -14,8 +15,14 @@ public class JpaCustomerEntity {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "identification")
+    private String identification;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
@@ -27,6 +34,9 @@ public class JpaCustomerEntity {
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private List<JpaAccountEntity> accounts;
 
+    @OneToOne(mappedBy = "customer", fetch = FetchType.EAGER)
+    private JpaCustomerUserDetailsEntity userDetails;
+
     public int getId() {
         return id;
     }
@@ -35,12 +45,28 @@ public class JpaCustomerEntity {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getIdentification() {
+        return identification;
+    }
+
+    public void setIdentification(String identification) {
+        this.identification = identification;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -65,5 +91,13 @@ public class JpaCustomerEntity {
 
     public void setAccounts(List<JpaAccountEntity> accounts) {
         this.accounts = accounts;
+    }
+
+    public JpaCustomerUserDetailsEntity getUserDetails() {
+        return userDetails;
+    }
+
+    public void setUserDetails(JpaCustomerUserDetailsEntity userDetails) {
+        this.userDetails = userDetails;
     }
 }

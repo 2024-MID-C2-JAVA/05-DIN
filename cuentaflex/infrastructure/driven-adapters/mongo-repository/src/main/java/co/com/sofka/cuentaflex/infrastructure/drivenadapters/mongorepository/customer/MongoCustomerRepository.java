@@ -16,12 +16,6 @@ public class MongoCustomerRepository implements CustomerRepository {
     }
 
     @Override
-    public Customer createCustomer(Customer customer) {
-        MongoCustomerDocument document = MongoCustomerMapper.toDocument(customer);
-        return MongoCustomerMapper.toCustomer(mongoTemplate.insert(document));
-    }
-
-    @Override
     public boolean existsCustomer(String customerId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(customerId));

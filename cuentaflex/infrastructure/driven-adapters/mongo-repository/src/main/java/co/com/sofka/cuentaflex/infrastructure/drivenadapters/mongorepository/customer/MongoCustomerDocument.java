@@ -1,6 +1,7 @@
 package co.com.sofka.cuentaflex.infrastructure.drivenadapters.mongorepository.customer;
 
 import co.com.sofka.cuentaflex.infrastructure.drivenadapters.mongorepository.account.MongoAccountDocument;
+import co.com.sofka.cuentaflex.infrastructure.drivenadapters.mongorepository.user.MongoCustomerUserDetailsDocument;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,20 +12,26 @@ import java.util.List;
 public class MongoCustomerDocument {
     @Id
     private String id;
-    private String username;
+    private String firstName;
+    private String lastName;
+    private String identification;
     private LocalDateTime createdAt;
     private boolean isDeleted;
     private List<MongoAccountDocument> accounts;
+    private MongoCustomerUserDetailsDocument userDetails;
 
     public MongoCustomerDocument() {
     }
 
-    public MongoCustomerDocument(String id, String username, LocalDateTime createdAt, boolean isDeleted, List<MongoAccountDocument> accounts) {
+    public MongoCustomerDocument(String id, String firstName, String lastName, String identification, LocalDateTime createdAt, boolean isDeleted, List<MongoAccountDocument> accounts, MongoCustomerUserDetailsDocument userDetails) {
         this.id = id;
-        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.identification = identification;
         this.createdAt = createdAt;
         this.isDeleted = isDeleted;
         this.accounts = accounts;
+        this.userDetails = userDetails;
     }
 
     public String getId() {
@@ -35,12 +42,28 @@ public class MongoCustomerDocument {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getIdentification() {
+        return identification;
+    }
+
+    public void setIdentification(String identification) {
+        this.identification = identification;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -65,5 +88,13 @@ public class MongoCustomerDocument {
 
     public void setAccounts(List<MongoAccountDocument> accounts) {
         this.accounts = accounts;
+    }
+
+    public MongoCustomerUserDetailsDocument getUserDetails() {
+        return userDetails;
+    }
+
+    public void setUserDetails(MongoCustomerUserDetailsDocument userDetails) {
+        this.userDetails = userDetails;
     }
 }

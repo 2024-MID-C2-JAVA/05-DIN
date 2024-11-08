@@ -33,4 +33,18 @@ public final class AESCipher {
             throw new FailedDecryptionException("An error occurred while decrypting", e);
         }
     }
+
+    public static void main(String[] args) {
+        try {
+            // Generar clave y IV de ejemplo
+            String key = "RIwZiWqkgK5wWSDzy4hZwA=="; // AES-128 requiere una clave de 16 bytes
+            String ivBytes = "ZTE4NTY4NDE3MDUy";  // IV de 16 bytes para AES
+
+            System.out.println("1755233010: " + encryptToBase64("1755233010", key, ivBytes));
+            System.out.println("12345678: " + encryptToBase64("12345678", key, ivBytes));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

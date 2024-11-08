@@ -7,7 +7,9 @@ public final class JpaCustomerMapper {
         return new Customer(
                 entity.getId() + "",
                 entity.getCreatedAt(),
-                entity.getUsername(),
+                entity.getFirstName(),
+                entity.getLastName(),
+                entity.getIdentification(),
                 entity.isDeleted()
         );
     }
@@ -19,7 +21,9 @@ public final class JpaCustomerMapper {
 
         jpaCustomerEntity.setId(id);
         jpaCustomerEntity.setCreatedAt(model.getCreatedAt());
-        jpaCustomerEntity.setUsername(model.getUsername());
+        jpaCustomerEntity.setFirstName(model.getFirstName());
+        jpaCustomerEntity.setLastName(model.getLastName());
+        jpaCustomerEntity.setIdentification(model.getIdentification());
         jpaCustomerEntity.setDeleted(model.isDeleted());
 
         return jpaCustomerEntity;
