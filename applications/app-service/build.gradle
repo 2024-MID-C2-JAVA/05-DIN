@@ -1,11 +1,15 @@
 dependencies {
     implementation project(':use-cases')
     implementation project(':postgres-repository')
-    /implementation project(':mongodb-repository')
+    implementation project(':jwt-postgres-repository')
+    //implementation project(':mongodb-repository')
     implementation project(':aes-encryption')
     implementation project(':web')
+    implementation project(':web-security')
     implementation project(':jwt')
 
     implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.security:spring-security-core')
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 }

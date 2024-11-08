@@ -1,7 +1,6 @@
 package com.bank.management;
 
 import com.bank.management.data.CustomerDocument;
-import com.bank.management.data.UserDocument;
 import com.bank.management.gateway.CustomerRepository;
 import com.bank.management.mapper.CustomerMapper;
 import org.springframework.data.mongodb.core.MongoTemplate;
