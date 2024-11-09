@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/bank-accounts")
+@RequestMapping("/api/v1/public/bank-accounts")
 public class AccountController {
 
     private final CreateBankAccountUseCase createBankAccountUseCase;

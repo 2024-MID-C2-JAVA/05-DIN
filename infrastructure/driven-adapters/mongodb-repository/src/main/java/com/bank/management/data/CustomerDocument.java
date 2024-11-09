@@ -15,8 +15,6 @@ public class CustomerDocument {
 
     private String username;
 
-    private UserDocument user;
-
     @Field("accounts")
     private List<AccountDocument> accounts;
 
@@ -35,15 +33,6 @@ public class CustomerDocument {
     }
 
     // Getters y Setters
-
-
-    public UserDocument getUser() {
-        return user;
-    }
-
-    public void setUser(UserDocument user) {
-        this.user = user;
-    }
 
     public String getId() {
         return id;

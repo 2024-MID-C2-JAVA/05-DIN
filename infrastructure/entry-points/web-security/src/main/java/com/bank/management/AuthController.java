@@ -14,12 +14,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/auth/v1")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -35,7 +37,7 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("/auth/v1/login")
+    @PostMapping("/login")
     public ResponseEntity<ResponseMs<Map<String, String>>> login(@RequestBody RequestMs<AuthRequestDTO> authRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -67,7 +69,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/auth/v1/register")
+    @PostMapping("/register")
     public ResponseEntity<ResponseMs<Map<String, String>>> register(@RequestBody RequestMs<AuthRequestDTO> authRequest) {
         User user = new User(authRequest.getDinBody().getUsername(), passwordEncoder.encode(authRequest.getDinBody().getPassword()));
 

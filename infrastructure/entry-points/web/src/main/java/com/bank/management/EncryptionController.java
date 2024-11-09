@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/encryption")
+@RequestMapping("/api/v1/public/encryption")
 public class EncryptionController {
 
     private final EncryptionUseCase encryptionUseCase;

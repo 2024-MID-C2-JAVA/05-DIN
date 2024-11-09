@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/transactions")
+@RequestMapping("/api/v1/private/transactions")
 public class TransactionsController {
 
     private final EncryptionUseCase encryptionUseCase;
