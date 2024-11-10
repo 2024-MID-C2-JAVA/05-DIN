@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/infrastructure/helper/jwt/architecture-hex.jwt.main.iml" filepath="$PROJECT_DIR$/.idea/modules/infrastructure/helper/jwt/architecture-hex.jwt.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/infrastructure/entry-points/web-security/architecture-hex.web-security.main.iml" filepath="$PROJECT_DIR$/.idea/modules/infrastructure/entry-points/web-security/architecture-hex.web-security.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/infrastructure/helper/jwt/helper.architecture-hex.jwt.main~1.iml" filepath="$PROJECT_DIR$/.idea/modules/infrastructure/helper/jwt/helper.architecture-hex.jwt.main~1.iml" />
     </modules>
   </component>
 </project>
