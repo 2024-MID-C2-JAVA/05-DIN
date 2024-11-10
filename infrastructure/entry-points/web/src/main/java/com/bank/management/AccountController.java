@@ -78,6 +78,14 @@ public class AccountController {
                     e.getMessage()
             );
 
+        }catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),
@@ -92,24 +100,34 @@ public class AccountController {
     @PostMapping("/customer/get-accounts")
     public ResponseEntity<ResponseMs<List<BankAccountDTO>>> getBankAccountByCustomer(@RequestBody RequestMs<RequestGetBankAccountDTO> request) {
 
-        request.validateDinHeaderFields();
+        try {
+            request.validateDinHeaderFields();
 
-        List<Account> accounts = getAccountsByCustomerUseCase.apply(request.getDinBody().getId());
+            List<Account> accounts = getAccountsByCustomerUseCase.apply(request.getDinBody().getId());
 
-        List<BankAccountDTO> accountDTOs = accounts.stream()
-                .map(account -> new BankAccountDTO.Builder()
-                        .number(account.getNumber())
-                        .amount(account.getAmount())
-                        .build())
-                .collect(Collectors.toList());
+            List<BankAccountDTO> accountDTOs = accounts.stream()
+                    .map(account -> new BankAccountDTO.Builder()
+                            .number(account.getNumber())
+                            .amount(account.getAmount())
+                            .build())
+                    .collect(Collectors.toList());
 
-        return ResponseBuilder.buildResponse(
-                request.getDinHeader(),
-                accountDTOs,
-                DinErrorCode.SUCCESS,
-                HttpStatus.CREATED,
-                "Account creation process completed."
-        );
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    accountDTOs,
+                    DinErrorCode.SUCCESS,
+                    HttpStatus.CREATED,
+                    "Account creation process completed."
+            );
+        }catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
+        }
     }
 
     @PostMapping("/get")
@@ -132,7 +150,7 @@ public class AccountController {
                     "Account information was retrieved successfully."
             );
 
-        } catch (BankAccountNotFoundException e) {
+        }  catch (BankAccountNotFoundException e) {
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),
                     null,
@@ -140,7 +158,24 @@ public class AccountController {
                     HttpStatus.NOT_FOUND,
                     "No account found with the provided ID."
             );
+        } catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
+        } catch (Exception e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.ERROR_DELETING_ACCOUNT,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "An unexpected error occurred while deleting the bank account."
+            );
         }
+
     }
 
     @PostMapping("/delete")
@@ -178,7 +213,14 @@ public class AccountController {
                     HttpStatus.NOT_FOUND,
                     "No bank account found with the provided ID."
             );
-
+        }catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),

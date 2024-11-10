@@ -13,6 +13,10 @@ dependencies {
     implementation project(':web')
     implementation project(':web-security')
     implementation project(':jwt')
+    implementation project(':din')
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.postgresql:postgresql'
 
     implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-starter-web')

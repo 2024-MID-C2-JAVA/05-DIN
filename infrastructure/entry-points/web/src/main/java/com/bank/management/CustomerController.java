@@ -67,6 +67,14 @@ public class CustomerController {
                     e.getMessage()
             );
 
+        } catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),
@@ -115,6 +123,14 @@ public class CustomerController {
                     e.getMessage()
             );
 
+        } catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),
@@ -149,7 +165,14 @@ public class CustomerController {
                     HttpStatus.OK,
                     "All customers retrieved successfully."
             );
-
+        } catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),
@@ -190,7 +213,14 @@ public class CustomerController {
                     HttpStatus.NOT_FOUND,
                     e.getMessage()
             );
-
+        } catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),

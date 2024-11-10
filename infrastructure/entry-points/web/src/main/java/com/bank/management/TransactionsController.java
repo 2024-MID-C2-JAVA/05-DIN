@@ -112,6 +112,14 @@ public class TransactionsController {
                     HttpStatus.NOT_FOUND,
                     e.getMessage()
             );
+        } catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(
                     request.getDinHeader(),
@@ -182,6 +190,14 @@ public class TransactionsController {
                     DinErrorCode.PURCHASE_FAILED,
                     HttpStatus.BAD_REQUEST,
                     e.getMessage()
+            );
+        } catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
             );
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(
@@ -266,6 +282,14 @@ public class TransactionsController {
                     DinErrorCode.CUSTOMER_NOT_FOUND,
                     HttpStatus.NOT_FOUND,
                     e.getMessage()
+            );
+        } catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    request.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
             );
         } catch (Exception e) {
             return ResponseBuilder.buildResponse(
