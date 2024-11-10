@@ -2,7 +2,11 @@ package com.bank.management;
 
 
 import com.bank.management.data.AuthRequestDTO;
+import com.bank.management.data.RequestMs;
+import com.bank.management.data.ResponseMs;
+import com.bank.management.enums.DinErrorCode;
 import com.bank.management.usecase.CreateUserUseCase;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,12 +42,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseMs<Map<String, String>>> login(@RequestBody RequestMs<AuthRequestDTO> authRequest) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> login(@RequestBody @Valid RequestMs<AuthRequestDTO> authRequest) {
         try {
-            authRequest.validateDinHeaderFields();
-            if(authRequest.getDinBody().getPassword().isBlank() || authRequest.getDinBody().getUsername().isBlank()) {
-                throw new IllegalArgumentException();
-            }
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getDinBody().getUsername(), authRequest.getDinBody().getPassword())
             );
@@ -61,39 +62,26 @@ public class AuthController {
                     HttpStatus.OK,
                     "Authentication successful."
             );
-        } catch(IllegalArgumentException e) {
-            return ResponseBuilder.buildResponse(
-                    authRequest.getDinHeader(),
-                    null,
-                    DinErrorCode.BAD_REQUEST,
-                    HttpStatus.BAD_REQUEST,
-                    ""
-            );
         } catch (AuthenticationException e) {
             return ResponseBuilder.buildResponse(
                     authRequest.getDinHeader(),
                     null,
                     DinErrorCode.BAD_CREDENTIALS,
                     HttpStatus.UNAUTHORIZED,
-                    "Authentication failed. "
+                    "Authentication failed. Invalid username or password."
             );
         }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseMs<Map<String, String>>> register(@RequestBody RequestMs<AuthRequestDTO> authRequest) {
-
+    public ResponseEntity<ResponseMs<Map<String, String>>> register(@RequestBody @Valid RequestMs<AuthRequestDTO> authRequest) {
         try {
-            authRequest.validateDinHeaderFields();
-            if(authRequest.getDinBody().getPassword().isBlank() || authRequest.getDinBody().getUsername().isBlank()) {
-                throw new IllegalArgumentException();
-            }
-            User user = new User(authRequest.getDinBody().getUsername(), passwordEncoder.encode(authRequest.getDinBody().getPassword()));
 
+            User user = new User(authRequest.getDinBody().getUsername(), passwordEncoder.encode(authRequest.getDinBody().getPassword()));
             User userCreated = useCase.apply(user);
 
             Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userCreated.getUsername(), authRequest.getDinBody().getPassword())
+                    new UsernamePasswordAuthenticationToken(userCreated.getUsername(), authRequest.getDinBody().getPassword())
             );
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -103,20 +91,21 @@ public class AuthController {
             responseData.put("token", token);
 
             return ResponseBuilder.buildResponse(
-                authRequest.getDinHeader(),
-                responseData,
-                DinErrorCode.SUCCESS,
-                HttpStatus.CREATED,
-                "User created and authenticated successfully."
+                    authRequest.getDinHeader(),
+                    responseData,
+                    DinErrorCode.SUCCESS,
+                    HttpStatus.CREATED,
+                    "User created and authenticated successfully."
             );
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseBuilder.buildResponse(
                     authRequest.getDinHeader(),
                     null,
                     DinErrorCode.BAD_REQUEST,
                     HttpStatus.BAD_REQUEST,
-                    ""
+                    "Invalid input data."
             );
         }
     }
+
 }

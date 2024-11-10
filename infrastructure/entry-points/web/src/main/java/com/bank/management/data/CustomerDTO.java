@@ -1,9 +1,12 @@
 package com.bank.management.data;
 
+import jakarta.validation.constraints.NotBlank;
+
 /**
  * Data Transfer Object for Customer.
  */
 public class CustomerDTO {
+    @NotBlank(message = "Username cannot be empty or null")
     private final String username;
 
     private CustomerDTO(Builder builder) {

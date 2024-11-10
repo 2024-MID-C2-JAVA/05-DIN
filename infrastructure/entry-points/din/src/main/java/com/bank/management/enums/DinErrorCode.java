@@ -1,4 +1,4 @@
-package com.bank.management;
+package com.bank.management.enums;
 
 public enum DinErrorCode {
 

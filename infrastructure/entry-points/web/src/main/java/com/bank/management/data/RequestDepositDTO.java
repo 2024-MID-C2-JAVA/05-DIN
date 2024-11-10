@@ -1,11 +1,18 @@
 package com.bank.management.data;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 
 public class RequestDepositDTO {
+    @NotBlank(message = "Username cannot be empty or null")
     private String Username;
+    @NotBlank(message = "Account number cannot be empty or null")
     private String accountNumber;
+    @NotNull(message = "Amount cannot be null")
     private BigDecimal amount;
+    @NotBlank(message = "Transaction type cannot be empty or null")
     private String type;
 
     private RequestDepositDTO(Builder builder) {

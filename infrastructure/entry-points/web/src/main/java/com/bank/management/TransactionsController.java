@@ -1,14 +1,13 @@
 package com.bank.management;
 
-import com.bank.management.data.RequestDepositDTO;
-import com.bank.management.data.RequestPurchaseDTO;
-import com.bank.management.data.RequestWithdrawalDTO;
+import com.bank.management.data.*;
+import com.bank.management.enums.DinErrorCode;
 import com.bank.management.exception.*;
 import com.bank.management.usecase.EncryptionUseCase;
 import com.bank.management.usecase.ProcessDepositUseCase;
 import com.bank.management.usecase.ProcessPurchaseWithCardUseCase;
 import com.bank.management.usecase.ProcessWithdrawUseCase;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,10 +37,9 @@ public class TransactionsController {
     }
 
     @PostMapping("/deposit")
-    public ResponseEntity<ResponseMs<Map<String, String>>> processDeposit(@RequestBody RequestMs<RequestDepositDTO> request, Principal principal) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> processDeposit(@RequestBody @Valid RequestMs<RequestDepositDTO> request, Principal principal) {
 
         try {
-            request.validateDinHeaderFields();
 
             String authenticatedUsername = principal.getName();
 
@@ -132,10 +130,9 @@ public class TransactionsController {
     }
 
     @PostMapping("/purchase-card")
-    public ResponseEntity<ResponseMs<Map<String, String>>> processPurchase(@RequestBody RequestMs<RequestPurchaseDTO> request) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> processPurchase(@RequestBody @Valid RequestMs<RequestPurchaseDTO> request) {
 
         try {
-            request.validateDinHeaderFields();
             String encryptedAccountNumber = request.getDinBody().getAccountNumber();
             String symmetricKey = request.getDinHeader().getSymmetricKey();
             String initializationVector = request.getDinHeader().getInitializationVector();
@@ -211,10 +208,9 @@ public class TransactionsController {
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<ResponseMs<Map<String, String>>> processWithdraw(@RequestBody RequestMs<RequestWithdrawalDTO> request, Principal principal) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> processWithdraw(@RequestBody @Valid RequestMs<RequestWithdrawalDTO> request, Principal principal) {
 
         try {
-            request.validateDinHeaderFields();
 
             String authenticatedUsername = principal.getName();
 

@@ -1,5 +1,8 @@
 package com.bank.management.data;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 
 /**
@@ -7,7 +10,9 @@ import java.math.BigDecimal;
  */
 public class RequestCreateAccountDTO {
 
+    @NotBlank(message = "Customer ID cannot be empty or null")
     private String customerId;
+    @NotNull(message = "Amount cannot be null")
     private BigDecimal amount;
 
     public RequestCreateAccountDTO() {}

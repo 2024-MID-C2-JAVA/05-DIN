@@ -1,7 +1,11 @@
 package com.bank.management.data;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class RequestCreateCustomerDTO {
 
+
+    @NotBlank(message = "Username cannot be empty or null")
     private String username;
 
     public RequestCreateCustomerDTO() {

@@ -1,9 +1,14 @@
-package com.bank.management;
+package com.bank.management.data;
 
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 public class RequestMs<T> {
 
+    @NotNull(message = "DinHeader must be present.")
     private DinHeader dinHeader;
+    @Valid
     private T dinBody;
 
     public RequestMs() {

@@ -1,10 +1,16 @@
 package com.bank.management.data;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 
 public class RequestWithdrawalDTO {
+    @NotBlank(message = "Username cannot be empty or null")
     private final String username;
+    @NotBlank(message = "Account number cannot be empty or null")
     private final String accountNumber;
+    @NotNull(message = "Amount cannot be null")
     private final BigDecimal amount;
 
     private RequestWithdrawalDTO(Builder builder) {

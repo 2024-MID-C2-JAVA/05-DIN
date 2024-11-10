@@ -1,6 +1,9 @@
 package com.bank.management.data;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class RequestGetBankAccountDTO {
+    @NotBlank(message = "ID cannot be empty or null")
     private String id;
 
     public RequestGetBankAccountDTO() {}
