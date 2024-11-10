@@ -128,8 +128,8 @@ public class CustomerController {
 
 
 
-    @GetMapping
-    public ResponseEntity<ResponseMs<List<AllCustomerDTO>>> getAllCustomers(@RequestBody RequestMs<DinHeader> request) {
+    @PostMapping
+    public ResponseEntity<ResponseMs<List<AllCustomerDTO>>> getAllCustomers(@RequestBody RequestMs<Void>  request) {
 
         try {
             request.validateDinHeaderFields();
