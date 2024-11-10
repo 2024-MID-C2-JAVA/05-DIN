@@ -40,6 +40,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ResponseMs<Map<String, String>>> login(@RequestBody RequestMs<AuthRequestDTO> authRequest) {
         try {
+            authRequest.validateDinHeaderFields();
+            if(authRequest.getDinBody().getPassword().isBlank() || authRequest.getDinBody().getUsername().isBlank()) {
+                throw new IllegalArgumentException();
+            }
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getDinBody().getUsername(), authRequest.getDinBody().getPassword())
             );
@@ -57,7 +61,14 @@ public class AuthController {
                     HttpStatus.OK,
                     "Authentication successful."
             );
-
+        } catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    authRequest.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
         } catch (AuthenticationException e) {
             return ResponseBuilder.buildResponse(
                     authRequest.getDinHeader(),
@@ -71,26 +82,41 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseMs<Map<String, String>>> register(@RequestBody RequestMs<AuthRequestDTO> authRequest) {
-        User user = new User(authRequest.getDinBody().getUsername(), passwordEncoder.encode(authRequest.getDinBody().getPassword()));
 
-        User userCreated = useCase.apply(user);
+        try {
+            authRequest.validateDinHeaderFields();
+            if(authRequest.getDinBody().getPassword().isBlank() || authRequest.getDinBody().getUsername().isBlank()) {
+                throw new IllegalArgumentException();
+            }
+            User user = new User(authRequest.getDinBody().getUsername(), passwordEncoder.encode(authRequest.getDinBody().getPassword()));
 
-        Authentication authentication = authenticationManager.authenticate(
+            User userCreated = useCase.apply(user);
+
+            Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userCreated.getUsername(), authRequest.getDinBody().getPassword())
-        );
+            );
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(userDetails);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String token = jwtUtil.generateToken(userDetails);
 
-        Map<String, String> responseData = new HashMap<>();
-        responseData.put("token", token);
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("token", token);
 
-        return ResponseBuilder.buildResponse(
+            return ResponseBuilder.buildResponse(
                 authRequest.getDinHeader(),
                 responseData,
                 DinErrorCode.SUCCESS,
                 HttpStatus.CREATED,
                 "User created and authenticated successfully."
-        );
+            );
+        } catch(IllegalArgumentException e) {
+            return ResponseBuilder.buildResponse(
+                    authRequest.getDinHeader(),
+                    null,
+                    DinErrorCode.BAD_REQUEST,
+                    HttpStatus.BAD_REQUEST,
+                    ""
+            );
+        }
     }
 }
