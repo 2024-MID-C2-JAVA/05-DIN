@@ -1,4 +1,4 @@
-package com.bank.management;
+package com.bank.management.data;
 
 public class DinHeader {
 

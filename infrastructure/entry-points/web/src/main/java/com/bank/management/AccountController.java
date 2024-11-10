@@ -1,8 +1,7 @@
 package com.bank.management;
 
-import com.bank.management.data.BankAccountDTO;
-import com.bank.management.data.RequestCreateAccountDTO;
-import com.bank.management.data.RequestGetBankAccountDTO;
+import com.bank.management.data.*;
+import com.bank.management.enums.DinErrorCode;
 import com.bank.management.exception.AccountCreationException;
 import com.bank.management.exception.BankAccountNotFoundException;
 import com.bank.management.exception.CustomerNotFoundException;
@@ -10,6 +9,7 @@ import com.bank.management.usecase.CreateBankAccountUseCase;
 import com.bank.management.usecase.DeleteBankAccountUseCase;
 import com.bank.management.usecase.GetAccountsByCustomerUseCase;
 import com.bank.management.usecase.GetBankAccountUseCase;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,10 +39,9 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseMs<Map<String, String>>> createAccount(@RequestBody RequestMs<RequestCreateAccountDTO> request) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> createAccount(@RequestBody @Valid RequestMs<RequestCreateAccountDTO> request) {
 
         try {
-            request.validateDinHeaderFields();
 
             Account accountDomain = new Account.Builder().amount(request.getDinBody().getAmount()).build();
             Customer customerDomain = new Customer.Builder().id(request.getDinBody().getCustomerId()).build();
@@ -98,10 +97,9 @@ public class AccountController {
     }
 
     @PostMapping("/customer/get-accounts")
-    public ResponseEntity<ResponseMs<List<BankAccountDTO>>> getBankAccountByCustomer(@RequestBody RequestMs<RequestGetBankAccountDTO> request) {
+    public ResponseEntity<ResponseMs<List<BankAccountDTO>>> getBankAccountByCustomer(@RequestBody @Valid RequestMs<RequestGetBankAccountDTO> request) {
 
         try {
-            request.validateDinHeaderFields();
 
             List<Account> accounts = getAccountsByCustomerUseCase.apply(request.getDinBody().getId());
 
@@ -131,10 +129,9 @@ public class AccountController {
     }
 
     @PostMapping("/get")
-    public ResponseEntity<ResponseMs<BankAccountDTO>> getBankAccount(@RequestBody RequestMs<RequestGetBankAccountDTO> request) {
+    public ResponseEntity<ResponseMs<BankAccountDTO>> getBankAccount(@RequestBody @Valid RequestMs<RequestGetBankAccountDTO> request) {
 
         try {
-            request.validateDinHeaderFields();
             Account account = getBankAccountUseCase.apply(request.getDinBody().getId());
 
             BankAccountDTO accountDTO = new BankAccountDTO.Builder()
@@ -179,10 +176,9 @@ public class AccountController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<ResponseMs<Map<String, String>>> deleteBankAccount(@RequestBody RequestMs<RequestGetBankAccountDTO> request) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> deleteBankAccount(@RequestBody @Valid RequestMs<RequestGetBankAccountDTO> request) {
 
         try {
-            request.validateDinHeaderFields();
             boolean isDeleted = deleteBankAccountUseCase.apply(request.getDinBody().getId());
             Map<String, String> responseData = new HashMap<>();
             responseData.put("accountNumber", request.getDinBody().getId());

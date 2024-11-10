@@ -1,5 +1,9 @@
 package com.bank.management;
 
+import com.bank.management.data.DinError;
+import com.bank.management.data.DinHeader;
+import com.bank.management.data.ResponseMs;
+import com.bank.management.enums.DinErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

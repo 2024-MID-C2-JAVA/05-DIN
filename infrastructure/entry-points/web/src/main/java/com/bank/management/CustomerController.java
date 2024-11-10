@@ -1,15 +1,14 @@
 package com.bank.management;
 
-import com.bank.management.data.AllCustomerDTO;
-import com.bank.management.data.CustomerDTO;
-import com.bank.management.data.RequestCreateCustomerDTO;
-import com.bank.management.data.RequestGetCustomerDTO;
+import com.bank.management.data.*;
+import com.bank.management.enums.DinErrorCode;
 import com.bank.management.exception.CustomerAlreadyExistsException;
 import com.bank.management.exception.CustomerNotFoundException;
 import com.bank.management.usecase.CreateCustomerUseCase;
 import com.bank.management.usecase.DeleteCustomerUseCase;
 import com.bank.management.usecase.GetAllCustomersUseCase;
 import com.bank.management.usecase.GetCustomerByIdUseCase;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,10 +35,9 @@ public class CustomerController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseMs<Map<String, String>>> createCustomer(@RequestBody RequestMs<RequestCreateCustomerDTO> request) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> createCustomer(@RequestBody @Valid RequestMs<RequestCreateCustomerDTO> request) {
 
         try {
-            request.validateDinHeaderFields();
 
             Customer customerDomain = new Customer.Builder()
                     .username(request.getDinBody().getUsername())
@@ -87,10 +85,9 @@ public class CustomerController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<ResponseMs<Map<String, String>>> deleteCustomer(@RequestBody RequestMs<RequestGetCustomerDTO> request) {
+    public ResponseEntity<ResponseMs<Map<String, String>>> deleteCustomer(@RequestBody @Valid RequestMs<RequestGetCustomerDTO> request) {
 
         try {
-            request.validateDinHeaderFields();
             boolean isDeleted = deleteCustomerUseCase.apply(request.getDinBody().getId());
 
             Map<String, String> responseData = new HashMap<>();
@@ -145,10 +142,9 @@ public class CustomerController {
 
 
     @PostMapping
-    public ResponseEntity<ResponseMs<List<AllCustomerDTO>>> getAllCustomers(@RequestBody RequestMs<Void>  request) {
+    public ResponseEntity<ResponseMs<List<AllCustomerDTO>>> getAllCustomers(@RequestBody @Valid RequestMs<Void>  request) {
 
         try {
-            request.validateDinHeaderFields();
             List<Customer> customers = getAllCustomersUseCase.apply();
 
             List<AllCustomerDTO> AllcustomerDTOs = customers.stream()
@@ -187,10 +183,9 @@ public class CustomerController {
 
 
     @PostMapping("/get")
-    public ResponseEntity<ResponseMs<CustomerDTO>> getCustomerById(@RequestBody RequestMs<RequestGetCustomerDTO> request) {
+    public ResponseEntity<ResponseMs<CustomerDTO>> getCustomerById(@RequestBody @Valid RequestMs<RequestGetCustomerDTO> request) {
 
         try {
-            request.validateDinHeaderFields();
             Customer customer = getCustomerByidUseCase.apply(request.getDinBody().getId());
 
             CustomerDTO customerDTO = new CustomerDTO.Builder()
