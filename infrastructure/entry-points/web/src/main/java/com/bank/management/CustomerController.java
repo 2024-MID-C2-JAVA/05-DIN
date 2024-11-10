@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/customers")
+@RequestMapping("/api/v1/public/customers")
 public class CustomerController {
 
     private final CreateCustomerUseCase createCustomerUseCase;
