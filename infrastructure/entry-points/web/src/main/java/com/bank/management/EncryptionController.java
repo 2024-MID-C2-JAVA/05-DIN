@@ -3,7 +3,7 @@ package com.bank.management;
 import com.bank.management.data.RequestMs;
 import com.bank.management.data.ResponseMs;
 import com.bank.management.enums.DinErrorCode;
-import com.bank.management.usecase.EncryptionUseCase;
+import com.bank.management.usecase.appservice.EncryptionUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

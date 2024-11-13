@@ -5,7 +5,7 @@ import com.bank.management.data.AuthRequestDTO;
 import com.bank.management.data.RequestMs;
 import com.bank.management.data.ResponseMs;
 import com.bank.management.enums.DinErrorCode;
-import com.bank.management.usecase.CreateUserUseCase;
+import com.bank.management.usecase.appservice.CreateUserUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

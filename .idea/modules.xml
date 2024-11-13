@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/infrastructure/driven-adapters/event-publisher/architecture-hex.event-publisher.main.iml" filepath="$PROJECT_DIR$/.idea/modules/infrastructure/driven-adapters/event-publisher/architecture-hex.event-publisher.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/infrastructure/driven-adapters/postgres-repository/architecture-hex.postgres-repository.iml" filepath="$PROJECT_DIR$/.idea/modules/infrastructure/driven-adapters/postgres-repository/architecture-hex.postgres-repository.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/applications/log-service/architecture-hex.log-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/applications/log-service/architecture-hex.log-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/infrastructure/entry-points/rabbit-listener/architecture-hex.rabbit-listener.main.iml" filepath="$PROJECT_DIR$/.idea/modules/infrastructure/entry-points/rabbit-listener/architecture-hex.rabbit-listener.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/infrastructure/entry-points/web-security/architecture-hex.web-security.main.iml" filepath="$PROJECT_DIR$/.idea/modules/infrastructure/entry-points/web-security/architecture-hex.web-security.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/infrastructure/helper/jwt/helper.architecture-hex.jwt.main.iml" filepath="$PROJECT_DIR$/.idea/modules/infrastructure/helper/jwt/helper.architecture-hex.jwt.main.iml" />
     </modules>
