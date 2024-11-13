@@ -36,7 +36,6 @@ public class JwtConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/v1/login",
                                 "/auth/v1/register",
-                                "/api/v1/public/customers/create",
                                 "/api/v1/public/customers/delete",
                                 "/api/v1/public/customers/get",
                                 "/api/v1/public/customers",
