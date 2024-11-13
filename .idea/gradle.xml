@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/applications/app-service" />
             <option value="$PROJECT_DIR$/domain/model" />
             <option value="$PROJECT_DIR$/domain/usecases" />
+            <option value="$PROJECT_DIR$/infrastructure/driven-adapters/event-publisher" />
             <option value="$PROJECT_DIR$/infrastructure/driven-adapters/jwt-postgres-repository" />
             <option value="$PROJECT_DIR$/infrastructure/driven-adapters/mongodb-repository" />
             <option value="$PROJECT_DIR$/infrastructure/driven-adapters/postgres-repository" />
