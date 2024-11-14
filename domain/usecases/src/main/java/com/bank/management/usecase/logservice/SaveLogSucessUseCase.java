@@ -3,15 +3,15 @@ package com.bank.management.usecase.logservice;
 import com.bank.management.Transaction;
 import com.bank.management.gateway.LogRepository;
 
-public class SaveLogUseCase {
+public class SaveLogSucessUseCase {
 
     private final LogRepository logRepository;
 
-    public SaveLogUseCase(LogRepository logRepository) {
+    public SaveLogSucessUseCase(LogRepository logRepository) {
         this.logRepository = logRepository;
     }
 
     public void apply(String trx) {
-        logRepository.saveLog(trx);
+        logRepository.saveLogSucess(trx);
     }
 }

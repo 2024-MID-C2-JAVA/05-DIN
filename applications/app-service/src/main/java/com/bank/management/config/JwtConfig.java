@@ -45,7 +45,12 @@ public class JwtConfig {
                                 "/api/v1/public/bank-accounts/customer/get-accounts",
                                 "/api/v1/public/encryption/encrypt",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**").permitAll()
+                                "/v3/api-docs/**")
+                        .permitAll()
+                        .requestMatchers(
+                                "/api/v1/private/transactions/deposit",
+                                "/api/v1/private/transactions/purchase-card",
+                                "/api/v1/private/transactions/withdraw").hasAuthority("CUSTOMER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

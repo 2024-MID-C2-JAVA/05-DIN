@@ -13,10 +13,10 @@ public class MessageSenderAdapter implements MessageSenderGateway {
     @Value("${rabbitmq.exchange.name}")
     private String exchangeName;
 
-    @Value("${rabbitmq.queue.name}")
+    @Value("${rabbitmq.queue.name}.error")
     private String queueName;
 
-    @Value("${rabbitmq.routing.key}")
+    @Value("${rabbitmq.routing.key}-error")
     private String routingKey;
 
     @Value("${encryption.symmetricKey}")
@@ -50,7 +50,7 @@ public class MessageSenderAdapter implements MessageSenderGateway {
             String jsonMessage = jsonMapper.writeValueAsString(encryptedTransaction);
             rabbitTemplate.convertAndSend(exchangeName, routingKey, jsonMessage);
         } catch (Exception e) {
-           //QUE DEBERIA SUCEDER ACA?
+           throw new IllegalStateException("Error sending encrypted transaction");
         }
     }
 }
